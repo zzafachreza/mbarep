@@ -19,6 +19,7 @@ import { windowWidth, fonts } from '../../utils/fonts';
 import { Icon } from 'react-native-elements';
 import { showMessage } from 'react-native-flash-message';
 import { Modalize } from 'react-native-modalize';
+import { Alert } from 'react-native';
 
 const wait = timeout => {
     return new Promise(resolve => {

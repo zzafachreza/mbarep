@@ -20,6 +20,7 @@ import { showMessage } from 'react-native-flash-message';
 import { getData, storeData, urlAPI } from '../../utils/localStorage';
 import axios from 'axios';
 import { useIsFocused } from '@react-navigation/native';
+import { Alert } from 'react-native';
 
 export default function BarangDetail({ navigation, route }) {
     const item = route.params;
@@ -81,18 +82,23 @@ export default function BarangDetail({ navigation, route }) {
             note: note,
             total: item.harga_barang * jumlah
         };
-        console.log('kirim tok server', kirim);
-        axios
-            .post(urlAPI + '/1add_cart.php', kirim)
-            .then(res => {
-                console.log(res);
 
-                showMessage({
-                    type: 'success',
-                    message: 'Berhasil ditambahkan ke keranjang',
+        if (item.stok == 0) {
+            Alert.alert('Mbarep Group', 'Maad stok produk kosong !')
+        } else {
+            console.log('kirim tok server', kirim);
+            axios
+                .post(urlAPI + '/1add_cart.php', kirim)
+                .then(res => {
+                    console.log(res);
+
+                    showMessage({
+                        type: 'success',
+                        message: 'Berhasil ditambahkan ke keranjang',
+                    });
+                    navigation.replace('MainApp');
                 });
-                navigation.replace('MainApp');
-            });
+        }
     };
     const [uom, setUom] = useState(route.params.satuan);
     const [note, setNote] = useState('');

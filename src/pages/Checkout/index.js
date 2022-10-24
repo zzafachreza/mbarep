@@ -63,7 +63,7 @@ export default function Checkout({ navigation, route }) {
 
 
   const simpan = () => {
-    // setLoading(true)
+    setLoading(true)
     console.error('kirim', kirim);
     axios.post(urlAPI + '/1add_transaksi.php', kirim).then(rr => {
       console.log(rr.data);
@@ -74,7 +74,7 @@ export default function Checkout({ navigation, route }) {
           message: 'Transaksi kamu berhasil dikirim'
         });
 
-        // navigation.replace('ListData');
+        navigation.replace('ListData');
       }, 1500)
     })
 
