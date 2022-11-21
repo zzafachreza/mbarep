@@ -7,6 +7,7 @@ import {
   FlatList,
   ImageBackground,
   Image,
+  Linking,
   ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
@@ -63,24 +64,24 @@ export default function ListDetail({ navigation, route }) {
 
 
   return (
-    <ViewShot style={{
-      flex: 1,
-    }} ref={ref} options={{ fileName: item.kode + "_mbrep", format: "jpg", quality: 0.9 }} captureMode="continuous">
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: colors.background2
-        }}>
 
-        {!buka && <View style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-          <ActivityIndicator color={colors.primary} size="large" />
-        </View>}
-        {buka &&
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: colors.white
+      }}>
 
+      {!buka && <View style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+        <ActivityIndicator color={colors.primary} size="large" />
+      </View>}
+      {buka &&
+        <ViewShot style={{
+          flex: 1,
+        }} ref={ref} options={{ fileName: item.kode, format: "jpg", quality: 0.9 }}>
           <ScrollView showsVerticalScrollIndicator={false} style={{ padding: 10, }}>
 
             {item.status !== 'PENDING' && (
@@ -286,29 +287,29 @@ export default function ListDetail({ navigation, route }) {
 
             <MyGap jarak={20} />
           </ScrollView>
+        </ViewShot>
+      }
 
-        }
+      <View style={{
+        padding: 10
+      }}>
+        <MyButton onPress={() => {
+          // alert(link);
+          // Linking.openURL(link)
 
-        <View style={{
-          padding: 10
-        }}>
-          <MyButton onPress={() => {
+          Share.open({
+            url: link
+          }).then((res) => {
+            console.log(res);
+          }).catch((err) => {
+            err && console.log(err);
+          });
 
-            Share.open({
-              url: link
-            })
-              .then((res) => {
-                console.log(res);
-              })
-              .catch((err) => {
-                err && console.log(err);
-              });
+        }} title='Share Pesanan' warna={colors.primary} colorText={colors.white} Icons="share-social-outline" iconColor={colors.white} />
+      </View>
+    </SafeAreaView>
 
-          }} title='Share Pesanan' warna={colors.primary} colorText={colors.white} Icons="share-social-outline" iconColor={colors.white} />
-        </View>
-      </SafeAreaView>
 
-    </ViewShot>
   );
 }
 

@@ -21,21 +21,23 @@ export default function Customer({ navigation, route }) {
             });
             getDataCustomer(res.id)
         });
-        getNamaCustomer();
+
 
 
     }, [])
 
 
-    const getNamaCustomer = () => {
-        getData('customer').then(res => {
-            setCustomer(res);
-        })
-    }
 
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState({});
-    const [customer, setCustomer] = useState('');
+    const [customer, setCustomer] = useState({
+        id: '',
+        nama_customer: '',
+        telepon_customer: '',
+        alamat_customer: '',
+        keterangan_customer: '',
+
+    });
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [kirim, setKirim] = useState({
@@ -196,12 +198,13 @@ export default function Customer({ navigation, route }) {
                                             text: "OK", onPress: () => {
 
                                                 storeData('customer', item);
+                                                setCustomer(item);
 
                                                 showMessage({
                                                     message: `${item.nama_customer} berhasil dipilih`,
                                                     type: 'success'
                                                 });
-                                                getNamaCustomer();
+
                                             }
                                         }
                                     ]
