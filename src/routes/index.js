@@ -57,6 +57,7 @@ import {
   Kuis,
   Wishlist,
   BarangDetail,
+  Customer,
 } from '../pages';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomNavigator } from '../components';
@@ -70,11 +71,11 @@ const MainApp = () => {
   return (
     <Tab.Navigator tabBar={props => <BottomNavigator {...props} />}>
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Suggest" component={Add} />
+      {/* <Tab.Screen name="Suggest" component={Add} /> */}
+      {/* 
+      <Tab.Screen name="History" component={ListData} /> */}
 
-      <Tab.Screen name="History" component={ListData} />
-
-      <Tab.Screen name="Favorit" component={Wishlist} />
+      {/* <Tab.Screen name="Favorit" component={Wishlist} /> */}
       <Tab.Screen name="Account" component={Account} />
     </Tab.Navigator>
   );
@@ -844,6 +845,35 @@ export default function Router() {
           },
         })}
       />
+
+      <Stack.Screen
+        name="Customer"
+        component={Customer}
+        options={({ route, navigation }) => ({
+          title: 'PELANGGAN',
+          headerTintColor: colors.white,
+          headerStyle: {
+            backgroundColor: colors.primary,
+            elevation: 0, // remove shadow on Android
+          },
+          cardStyleInterpolator: ({ current, layouts }) => {
+            return {
+              cardStyle: {
+                transform: [
+                  {
+                    translateX: current.progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [layouts.screen.width, 0],
+                    }),
+                  },
+                ],
+              },
+            };
+          },
+        })}
+      />
+
+
       <Stack.Screen
         name="ListData2"
         component={ListData2}

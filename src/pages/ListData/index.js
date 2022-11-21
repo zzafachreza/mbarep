@@ -89,20 +89,7 @@ export default function ({ navigation, route }) {
             {item.tanggal}
           </Text>
         </View>
-        <View style={{
-          flex: 1,
-        }}>
-          <Text
-            style={{
-              fontSize: windowWidth / 35,
-              // color: colors.white,
-              textAlign: 'center',
-              color: colors.textPrimary,
-              fontFamily: fonts.secondary[600],
-            }}>
-            {item.status}
-          </Text>
-        </View>
+
       </View>
 
       <View

@@ -261,7 +261,7 @@ export default function Cart({ navigation, route }) {
                 fontSize: windowWidth / 25,
                 textAlign: 'center'
               }}>
-              {item.uom}
+              {item.satuan}
             </Text>
             <View style={{
               flexDirection: 'row',

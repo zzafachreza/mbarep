@@ -19,13 +19,17 @@ import { windowWidth, fonts } from '../../utils/fonts';
 import { Icon } from 'react-native-elements';
 import { showMessage } from 'react-native-flash-message';
 import { Modalize } from 'react-native-modalize';
-
+import { useIsFocused } from '@react-navigation/native';
+import { MyButton } from '../../components';
+import 'intl';
+import 'intl/locale-data/jsonp/en';
 const wait = timeout => {
   return new Promise(resolve => {
     setTimeout(resolve, timeout);
   });
 };
 export default function ({ navigation, route }) {
+  const isFocused = useIsFocused();
   const [refreshing, setRefreshing] = React.useState(false);
   const [data, setData] = useState([]);
   const [user, setUser] = useState({});
@@ -42,14 +46,33 @@ export default function ({ navigation, route }) {
   //   getDataBarang();
   //   wait(2000).then(() => setRefreshing(false));
   // }, []);
-
+  var sub = 0;
+  const [total, setTotal] = useState([]);
   useEffect(() => {
+    if (isFocused) {
+      __transaction();
+    }
+    getDataBarang();
+  }, [isFocused]);
+
+  const __transaction = () => {
     getData('user').then(res => {
       setUser(res);
+      axios.post(urlAPI + '/cart.php', {
+        fid_user: res.id
+      }).then(x => {
+        console.log('cart', x.data);
+        setTotal(x.data)
+      })
     })
-    getDataBarang();
-    getDataKategori();
-  }, []);
+  }
+
+  total.map((item, key) => {
+    sub += parseFloat(item.total);
+
+  })
+
+
 
   const addToCart = () => {
     const kirim = {
@@ -65,12 +88,10 @@ export default function ({ navigation, route }) {
     axios
       .post(urlAPI + '/1add_cart.php', kirim)
       .then(res => {
-        console.log(res);
+        // console.log(res.data);
 
-        showMessage({
-          type: 'success',
-          message: 'Berhasil ditambahkan ke keranjang',
-        });
+        __transaction();
+        setJumlah(1)
         // navigation.replace('MainApp');
         modalizeRef.current.close();
       });
@@ -85,13 +106,7 @@ export default function ({ navigation, route }) {
 
 
 
-  const getDataKategori = () => {
-    axios.post(urlAPI + '/1data_kategori.php').then(res => {
-      console.log('kategori', res.data);
 
-      setKategori(res.data);
-    })
-  }
 
 
   const getDataBarang = (y, z = route.params.key == null ? '' : route.params.key) => {
@@ -268,51 +283,16 @@ export default function ({ navigation, route }) {
         </Text>
 
 
-        <TouchableOpacity onPress={() => {
-          axios.post(urlAPI + '/1add_wish.php', {
-            fid_user: user.id,
-            fid_barang: item.id
-          }).then(x => {
-            console.warn('add wishlist', x.data);
 
-            if (x.data == 200) {
-              showMessage({
-                type: 'success',
-                message: item.nama_barang + ' berhasil ditambahkan ke favorit !'
-              })
-            } else {
-              showMessage({
-                type: 'danger',
-                message: item.nama_barang + ' sudah ada di favorit kamu !'
-              })
-            }
-          })
-
-        }} style={{
-          width: 30,
-          marginVertical: 20,
-        }}>
-          <Icon type='ionicon' name='heart-outline' />
-        </TouchableOpacity>
       </View>
       <View style={{
         justifyContent: 'center',
         alignItems: 'center'
       }}>
-        <Image source={{
-          uri: item.image
-        }} style={{
-          alignSelf: 'center',
-          width: 80,
-          height: 80,
-          borderRadius: 10,
-
-        }} />
         <TouchableOpacity onPress={() => {
-          navigation.navigate('BarangDetail', item);
-          // setShow(item)
-
-          // modalizeRef.current.open();
+          // navigation.navigate('BarangDetail', item);
+          setShow(item)
+          modalizeRef.current.open();
 
         }} style={{
           width: 80,
@@ -328,46 +308,12 @@ export default function ({ navigation, route }) {
             fontSize: windowWidth / 30,
             color: colors.primary,
             fontFamily: fonts.secondary[600],
-          }}>Detail</Text>
+          }}>+</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 
-  const __renderItemKategori = ({ item }) => {
-    return (
-      <TouchableOpacity onPress={() => getDataBarang('', item.id)} style={{
-        marginVertical: 10,
-        borderBottomWidth: 1,
-        paddingBottom: 10,
-        borderBottomColor: colors.border_list,
-        flex: 1,
-
-      }}>
-
-        <View style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-
-        }}>
-          <Image style={{
-            width: 70,
-            height: 70,
-            resizeMode: 'contain'
-
-          }} source={{
-            uri: item.image
-          }} />
-        </View>
-        <Text style={{
-          textAlign: 'center',
-          color: colors.textPrimary,
-          fontFamily: fonts.secondary[600],
-          fontSize: windowWidth / 30,
-        }}>{item.nama_kategori}</Text>
-      </TouchableOpacity>
-    )
-  }
 
   return (
     <SafeAreaView
@@ -410,43 +356,37 @@ export default function ({ navigation, route }) {
 
 
 
+
+
       <View style={{
-        flexDirection: 'row'
+        flex: 1,
       }}>
 
-        <View style={{
-          flex: 0.3,
 
-        }}>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            data={kategori}
-            renderItem={__renderItemKategori}
-            keyExtractor={item => item.id}
-          />
-        </View>
-
-        <View style={{
+        {loading && <View style={{
           flex: 1,
-          paddingLeft: 10,
+          marginTop: '50%',
+          justifyContent: 'center',
+          alignItems: 'center'
         }}>
-          {loading && <View style={{
-            flex: 1,
-            marginTop: '50%',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}>
-            <ActivityIndicator size="large" color={colors.primary} /></View>}
-          {!loading && <FlatList
-            showsVerticalScrollIndicator={false}
-            data={data}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-          />}
-        </View>
+          <ActivityIndicator size="large" color={colors.primary} /></View>}
+
+
+        {!loading && <FlatList
+          showsVerticalScrollIndicator={false}
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+        />}
+
       </View>
+      <View style={{
+        // flex: 1,
+      }}>
 
+        {total.length > 0 && <MyButton warna={colors.primary} onPress={() => navigation.navigate('Cart')} title={"Rp. " + new Intl.NumberFormat().format(sub) + " - KERANJANG"} Icons="shield-checkmark-outline" />}
 
+      </View>
       <Modalize
         withHandle={false}
         scrollViewProps={{ showsVerticalScrollIndicator: false }}

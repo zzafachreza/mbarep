@@ -10,9 +10,10 @@ import {
   ScrollView,
   FlatList,
   Linking,
+  StyleSheet
 } from 'react-native';
 import { colors } from '../../utils/colors';
-import { fonts } from '../../utils/fonts';
+import { fonts, windowWidth } from '../../utils/fonts';
 import { storeData, getData, urlAPI } from '../../utils/localStorage';
 import { Icon } from 'react-native-elements';
 import MyCarouser from '../../components/MyCarouser';
@@ -50,7 +51,7 @@ export default function Home({ navigation }) {
 
       PushNotification.localNotification({
         /* Android Only Properties */
-        channelId: 'suryaconnect', // (required) channelId, if the channel doesn't exist, notification will not trigger.
+        channelId: 'mbarepgroup', // (required) channelId, if the channel doesn't exist, notification will not trigger.
         title: obj.notification.title, // (optional)
         message: obj.notification.body, // (required)
       });
@@ -215,20 +216,7 @@ export default function Home({ navigation }) {
             <Icon type='ionicon' name="logo-whatsapp" color={colors.border} />
 
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ListData2')}
-            style={{
-              position: 'relative',
-              width: 50,
-              height: 50,
-              justifyContent: 'center',
-              alignItems: 'center'
 
-
-            }}>
-            <Icon type='ionicon' name="bookmark-outline" color={colors.border} />
-
-          </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => navigation.navigate('Cart')}
@@ -254,37 +242,71 @@ export default function Home({ navigation }) {
 
       </View>
 
-      <ScrollView style={{
-        backgroundColor: colors.background1
-      }}>
-        <MyGap jarak={10} />
-        <MyCarouser />
+      <MyCarouser />
 
-        {/* list Kategoti */}
-        <View>
-          <View style={{
-            flexDirection: 'row',
-            flex: 1,
-            paddingHorizontal: 10,
-            padding: 10,
-            alignItems: 'center'
-          }}>
-            <Icon type='ionicon' name="grid-outline" color={colors.textPrimary} />
-            <Text style={{
-              left: 10,
-              color: colors.textPrimary,
-              fontFamily: fonts.secondary[600],
-              fontSize: windowWidth / 25,
-            }}>Kategori Produk</Text>
-          </View>
-          <View style={{
-            flex: 1,
-          }}>
-            <FlatList numColumns={2} data={kategori} renderItem={__renderItemKategori} />
-          </View>
+
+      <View style={{
+        justifyContent: 'center',
+        flex: 1,
+      }}>
+        <View style={{
+          flexDirection: 'row',
+          marginVertical: 10,
+          marginHorizontal: 10,
+        }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Barang', {
+            key: 0
+          })} style={styles.mbtn}>
+            <Image source={require('../../assets/a1.png')} style={styles.mimg} />
+            <Text style={styles.mtext}>Transaksi Baru</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('ListData')} style={styles.mbtn}>
+            <Image source={require('../../assets/a2.png')} style={styles.mimg} />
+            <Text style={styles.mtext}>Transaksi</Text>
+          </TouchableOpacity>
         </View>
-      </ScrollView>
+        <View style={{
+          flexDirection: 'row',
+          marginHorizontal: 10,
+          marginVertical: 10,
+        }}>
+          <TouchableOpacity style={styles.mbtn}>
+            <Image source={require('../../assets/a3.png')} style={styles.mimg} />
+            <Text style={styles.mtext}>Produk</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Customer')} style={styles.mbtn}>
+            <Image source={require('../../assets/a4.png')} style={styles.mimg} />
+            <Text style={styles.mtext}>Pelanggan</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
 
     </SafeAreaView>
   );
 }
+
+
+const styles = StyleSheet.create({
+  mbtn: {
+    flex: 1,
+    margin: 5,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    padding: 10,
+  },
+  mimg: {
+    width: 70,
+    height: 70,
+    margin: 10,
+    resizeMode: 'contain'
+  },
+  mtext: {
+    marginTop: 10,
+    fontSize: windowWidth / 30,
+    color: colors.white,
+    fontFamily: fonts.secondary[600]
+  }
+})

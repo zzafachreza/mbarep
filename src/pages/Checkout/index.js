@@ -36,6 +36,8 @@ export default function Checkout({ navigation, route }) {
 
   const [kirim, setKirim] = useState(route.params);
   const [user, setUser] = useState({});
+
+  const isFocused = useIsFocused();
   const [kurir, setKurir] = useState([
     {
       nama_kirim: 'Antar',
@@ -46,6 +48,7 @@ export default function Checkout({ navigation, route }) {
   ]);
   const [modalVisible, setModalVisible] = useState(false);
   const [open, setOpen] = useState(false);
+  const [customer, setCustomer] = useState({});
   useEffect(() => {
     getData('user').then(res => {
       console.error(res)
@@ -56,9 +59,21 @@ export default function Checkout({ navigation, route }) {
       })
     });
 
+    if (isFocused) {
+      getData('customer').then(res => {
+        setCustomer(res);
+        setKirim({
+          ...kirim,
+          catatan: '',
+          fid_customer: res.id
+        })
+      })
+    }
 
 
-  }, []);
+
+
+  }, [isFocused]);
 
 
 
@@ -93,29 +108,47 @@ export default function Checkout({ navigation, route }) {
             padding: 10,
             borderBottomWidth: 1,
             borderBottomColor: colors.border_list,
+            flexDirection: 'row'
           }}>
-            <Text style={{
-              color: colors.textPrimary,
-              fontFamily: fonts.secondary[600],
-              fontSize: windowWidth / 30
-            }}>Nama Pemesan</Text>
-            <Text style={{
-              fontFamily: fonts.secondary[400],
-              fontSize: windowWidth / 30,
-              color: colors.textPrimary,
+            <View style={{
+              flex: 1,
+            }}>
+              <Text style={{
+                color: colors.textPrimary,
+                fontFamily: fonts.secondary[600],
+                fontSize: windowWidth / 30
+              }}>Nama Customer</Text>
+              <Text style={{
+                fontFamily: fonts.secondary[400],
+                fontSize: windowWidth / 30,
+                color: colors.textPrimary,
 
-            }}>{user.nama_lengkap}</Text>
-            <Text style={{
-              fontFamily: fonts.secondary[400],
-              fontSize: windowWidth / 30,
-              color: colors.textPrimary
-            }}>{user.telepon}</Text>
-            <Text style={{
-              fontFamily: fonts.secondary[400],
-              fontSize: windowWidth / 30,
-              color: colors.textPrimary
-            }}>{user.alamat}</Text>
+              }}>{customer.nama_customer}</Text>
+              <Text style={{
+                fontFamily: fonts.secondary[400],
+                fontSize: windowWidth / 30,
+                color: colors.textPrimary
+              }}>{customer.telepon_customer}</Text>
+              <Text style={{
+                fontFamily: fonts.secondary[400],
+                fontSize: windowWidth / 30,
+                color: colors.textPrimary
+              }}>{user.alamat}</Text>
+            </View>
+            <TouchableOpacity onPress={() => navigation.navigate('Customer')} style={{
+              padding: 10,
+              flexDirection: 'row',
+              backgroundColor: colors.primary,
+              alignItems: 'center'
+            }}>
+              <Icon type='ionicon' name='search-outline' color={colors.white} />
+              <Text style={{
+                color: colors.white,
+                fontFamily: fonts.secondary[600]
+              }}>Ganti Customer</Text>
+            </TouchableOpacity>
           </View>
+
 
 
 
