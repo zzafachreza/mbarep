@@ -48,7 +48,13 @@ export default function Checkout({ navigation, route }) {
   ]);
   const [modalVisible, setModalVisible] = useState(false);
   const [open, setOpen] = useState(false);
-  const [customer, setCustomer] = useState({});
+  const [customer, setCustomer] = useState({
+    id: '',
+    nama_customer: '',
+    alamat_customer: '',
+    keterangan_customer: '',
+    telepon_customer: ''
+  });
   useEffect(() => {
     getData('user').then(res => {
       console.error(res)
@@ -61,12 +67,21 @@ export default function Checkout({ navigation, route }) {
 
     if (isFocused) {
       getData('customer').then(res => {
-        setCustomer(res);
-        setKirim({
-          ...kirim,
-          catatan: '',
-          fid_customer: res.id
-        })
+        console.warn('customer', res);
+
+        if (!res) {
+          console.log('tidak ada')
+        } else {
+
+          setCustomer(res);
+          setKirim({
+            ...kirim,
+            catatan: '',
+            fid_customer: res.id
+          })
+
+        }
+
       })
     }
 
@@ -78,20 +93,31 @@ export default function Checkout({ navigation, route }) {
 
 
   const simpan = () => {
-    setLoading(true)
-    console.error('kirim', kirim);
-    axios.post(urlAPI + '/1add_transaksi.php', kirim).then(rr => {
-      console.log(rr.data);
-      setTimeout(() => {
-        setLoading(false);
-        showMessage({
-          type: 'success',
-          message: 'Transaksi kamu berhasil dikirim'
-        });
 
-        navigation.replace('ListData');
-      }, 1500)
-    })
+
+
+    if (customer.id === "") {
+      showMessage({
+        message: 'Customer Belum dipilih !',
+        type: 'danger'
+      })
+    } else {
+      setLoading(true);
+      console.error('kirim', kirim);
+      axios.post(urlAPI + '/1add_transaksi.php', kirim).then(rr => {
+        console.log(rr.data);
+        setTimeout(() => {
+          setLoading(false);
+          showMessage({
+            type: 'success',
+            message: 'Transaksi kamu berhasil dikirim'
+          });
+
+          navigation.replace('ListData');
+        }, 1500)
+      })
+    }
+
 
   };
 

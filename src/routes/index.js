@@ -58,6 +58,7 @@ import {
   Wishlist,
   BarangDetail,
   Customer,
+  BarangList,
 } from '../pages';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomNavigator } from '../components';
@@ -515,7 +516,7 @@ export default function Router() {
         name="Kategori"
         component={Kategori}
         options={({ route, navigation }) => ({
-          title: 'Detail Pembantu',
+          title: 'Kategori Produk',
           headerTintColor: 'white',
           headerStyle: {
             backgroundColor: colors.primary,
@@ -649,6 +650,14 @@ export default function Router() {
       <Stack.Screen
         name="Barang"
         component={Barang}
+        options={{
+          headerShown: false
+        }}
+      />
+
+      <Stack.Screen
+        name="BarangList"
+        component={BarangList}
         options={{
           headerShown: false
         }}

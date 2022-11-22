@@ -270,7 +270,7 @@ export default function Home({ navigation }) {
           marginHorizontal: 10,
           marginVertical: 10,
         }}>
-          <TouchableOpacity style={styles.mbtn}>
+          <TouchableOpacity style={styles.mbtn} onPress={() => navigation.navigate('Kategori')}>
             <Image source={require('../../assets/a3.png')} style={styles.mimg} />
             <Text style={styles.mtext}>Produk</Text>
           </TouchableOpacity>

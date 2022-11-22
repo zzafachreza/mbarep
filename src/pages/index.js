@@ -47,6 +47,7 @@ import Kuis from './Kuis';
 import Wishlist from './Wishlist';
 import BarangDetail from './BarangDetail';
 import Customer from './Customer';
+import BarangList from './BarangList';
 
 
 
@@ -105,5 +106,6 @@ export {
   ListRedeem,
   Wishlist,
   BarangDetail,
-  Customer
+  Customer,
+  BarangList
 };
