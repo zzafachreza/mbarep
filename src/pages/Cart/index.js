@@ -10,12 +10,13 @@ import {
   Linking,
   ActivityIndicator,
   Alert,
+  TextInput,
 } from 'react-native';
 
 import { getData, storeData, urlAPI } from '../../utils/localStorage';
 import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MyButton, MyInput, MyPicker } from '../../components';
+import { MyButton, MyGap, MyInput, MyPicker } from '../../components';
 import { colors } from '../../utils/colors';
 import { TouchableOpacity, Swipeable } from 'react-native-gesture-handler';
 import { fonts, windowHeight, windowWidth } from '../../utils/fonts';
@@ -37,6 +38,7 @@ export default function Cart({ navigation, route }) {
   const [loading, setLoading] = useState(false);
   const [jumlah, setJumlah] = useState(1);
   const [itemz, setItem] = useState({});
+  const [modal, setModal] = useState(false);
 
   const modalizeRef = useRef();
 
@@ -216,6 +218,29 @@ export default function Cart({ navigation, route }) {
               {item.nama_barang}
             </Text>
 
+            {item.diskon > 0 && <View style={{
+              flexDirection: 'row'
+            }}>
+              <Text
+                style={{
+                  fontFamily: fonts.secondary[400],
+                  textDecorationLine: "line-through",
+                  textDecorationStyle: "solid",
+                  fontSize: windowWidth / 33,
+                  color: colors.black,
+
+                }}>
+                {new Intl.NumberFormat().format(item.harga_dasar)}
+
+              </Text>
+              <Text style={{
+                marginLeft: 5,
+                fontFamily: fonts.secondary[600],
+                color: colors.success
+              }}>{item.diskon}% </Text>
+            </View>}
+
+
             <Text
               style={{
                 fontFamily: fonts.secondary[400],
@@ -225,15 +250,25 @@ export default function Cart({ navigation, route }) {
               }}>
               {new Intl.NumberFormat().format(item.harga)} x {item.qty} {item.uom}
             </Text>
-            <Text
-              style={{
-
-                fontFamily: fonts.secondary[600],
-                fontSize: windowWidth / 25,
-                color: colors.black,
+            <View style={{
+              flexDirection: 'row'
+            }}>
+              <Text
+                style={{
+                  right: 5,
+                  fontFamily: fonts.secondary[600],
+                  fontSize: windowWidth / 25,
+                  color: colors.black,
+                }}>
+                Rp. {new Intl.NumberFormat().format(item.total)}
+              </Text>
+              <TouchableOpacity onPress={() => {
+                setItem(item);
+                setModal(true);
               }}>
-              Rp. {new Intl.NumberFormat().format(item.total)}
-            </Text>
+                <Icon type="ionicon" name="create" color={colors.warning} size={15} />
+              </TouchableOpacity>
+            </View>
             <Text
               style={{
                 fontFamily: fonts.secondary[400],
@@ -354,6 +389,7 @@ export default function Cart({ navigation, route }) {
                     color: colors.black,
                   }}>
                   Rp. {new Intl.NumberFormat().format(itemz.harga * itemz.qty)}
+
                 </Text>
               </View>
               <TouchableOpacity onPress={() => modalizeRef.current.close()}>
@@ -479,13 +515,80 @@ export default function Cart({ navigation, route }) {
           }}>
 
 
-          <View style={{
+          {!modal && <View style={{
             flex: 1,
           }}>
             <MyButton warna={colors.primary} onPress={kirimServer} title={"Rp. " + new Intl.NumberFormat().format(sub) + " - CHECKOUT"} Icons="shield-checkmark-outline" />
-          </View>
+          </View>}
 
         </View>}
+
+      {modal && <View style={{
+        position: 'absolute',
+        marginTop: windowHeight / 8,
+        width: windowWidth,
+        padding: 20,
+      }}>
+        <View style={{
+          flex: 1,
+          padding: 10,
+          backgroundColor: colors.zavalabs,
+          borderRadius: 10,
+        }}>
+          <View style={{
+            flexDirection: 'row'
+          }}>
+            <View style={{
+              flex: 1,
+              marginBottom: 10,
+            }}>
+              <Text style={{
+
+                fontFamily: fonts.secondary[400],
+                fontSize: windowWidth / 25,
+                color: colors.black,
+              }}>{itemz.nama_barang}</Text>
+              <Text style={{
+                flex: 1,
+                fontFamily: fonts.secondary[600],
+                fontSize: windowWidth / 20,
+                color: colors.black,
+              }}>Rp. {new Intl.NumberFormat().format(itemz.harga_dasar)}</Text>
+            </View>
+            <TouchableOpacity onPress={() => {
+              setItem({});
+              setModal(false);
+            }}>
+              <Icon type="ionicon" name="close-outline" size={windowWidth / 15} />
+            </TouchableOpacity>
+          </View>
+          <View>
+            <TextInput onChangeText={x => setItem({
+              ...itemz,
+              harga_dasar_baru: x
+            })} placeholder='Update harga' autoFocus keyboardType='number-pad' style={{
+              borderWidth: 1,
+              fontFamily: fonts.secondary[600],
+              fontSize: windowWidth / 20,
+              borderColor: colors.primary,
+              borderRadius: 10, textAlign: 'center'
+            }} />
+          </View>
+          <MyGap jarak={20} />
+          <MyButton onPress={() => {
+            console.log(itemz);
+            axios.post(urlAPI + '/cart_update_harga.php', itemz).then(res => {
+              console.log(res.data);
+              setModal(false);
+              setItem({});
+              getData('user').then(tkn => {
+                __getDataBarang(tkn.id);
+              });
+            })
+          }} title="Simpan Perubahan" warna={colors.primary} />
+        </View>
+      </View>}
+
 
     </SafeAreaView>
   );

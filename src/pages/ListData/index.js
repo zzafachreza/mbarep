@@ -9,6 +9,7 @@ import {
   RefreshControl,
   Image,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import { storeData, getData, urlAPI } from '../../utils/localStorage';
 import axios from 'axios';
@@ -59,70 +60,53 @@ export default function ({ navigation, route }) {
       onPress={() => navigation.navigate('ListDetail', item)}
       style={{
         padding: 10,
-        margin: 10,
-        backgroundColor: colors.background1,
-        elevation: 1,
+        flexDirection: 'row',
+        marginVertical: 5,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.border_list
       }}>
-      <View style={{ flexDirection: 'row', padding: 10 }}>
-        <View style={{
-          flex: 1,
-        }}>
-          <Text
-            style={{
-              flex: 1,
-              fontSize: windowWidth / 30,
-              color: colors.white,
-              backgroundColor: colors.primary,
-              textAlign: 'center',
-              fontFamily: fonts.secondary[600],
-            }}>
-            {item.kode}
-          </Text>
-          <Text
-            style={{
-              flex: 1,
-              textAlign: 'center',
-              fontSize: windowWidth / 30,
-              color: colors.textPrimary,
-              fontFamily: fonts.secondary[600],
-            }}>
-            {item.tanggal}
-          </Text>
-        </View>
+      <View style={{
+        flex: 1,
+      }}>
+        <Text
+          style={{
+            fontSize: windowWidth / 30,
+            color: colors.black,
+            fontFamily: fonts.secondary[600],
+          }}>
+          {item.kode}
+        </Text>
+        <Text
+          style={{
+            fontSize: windowWidth / 30,
+            color: colors.primary,
+            fontFamily: fonts.secondary[600],
+          }}>
+          {item.nama_customer}
+        </Text>
+        <Text
+          style={{
+            fontSize: windowWidth / 30,
+            color: colors.black,
+            fontFamily: fonts.secondary[400],
+          }}>
+          {item.tanggal}
+        </Text>
+        <Text style={{
+          fontSize: windowWidth / 35,
+          fontFamily: fonts.secondary[200],
+          color: colors.textPrimary,
+
+        }}>{item.catatan}</Text>
+
 
       </View>
-
-      <View
-        style={{
-          flexDirection: 'row',
-          padding: 10,
-          borderTopWidth: 1,
-          borderTopColor: colors.primary,
-        }}>
-
-        <View
-          style={{
-            flex: 1,
-          }}>
-          <Text style={{
-            fontSize: windowWidth / 30,
-            fontFamily: fonts.secondary[600],
-            color: colors.textPrimary,
-          }}>Catatan Pesanan</Text>
-          <Text style={{
-            fontSize: windowWidth / 30,
-            fontFamily: fonts.secondary[400],
-            color: colors.textPrimary,
-          }}>{item.catatan}</Text>
-
-        </View>
-        <View>
-          <Text style={{
-            fontSize: windowWidth / 20,
-            fontFamily: fonts.secondary[600],
-            color: colors.black,
-          }}> Rp. {new Intl.NumberFormat().format(item.harga_total)}</Text>
-        </View>
+      <View>
+        <Text style={{
+          fontSize: windowWidth / 25,
+          fontFamily: fonts.secondary[600],
+          color: colors.black,
+        }}> Rp. {new Intl.NumberFormat().format(item.harga_total)}</Text>
 
       </View>
     </TouchableOpacity>
@@ -141,6 +125,26 @@ export default function ({ navigation, route }) {
         padding: 10,
         backgroundColor: colors.background1,
       }}>
+      <TextInput onChangeText={x => {
+
+        const filtered = data.filter(i => i.nama_customer.toLowerCase().indexOf(x.toLowerCase()) > -1)
+
+
+        setData(filtered);
+        if (x.length == 0) {
+          getDataBarang();
+        } else {
+          setData(filtered);
+        }
+      }} placeholder='Cari Customer' style={{
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: colors.primary,
+        paddingLeft: 10,
+        fontSize: windowWidth / 30,
+        color: colors.black,
+        fontFamily: fonts.secondary[600],
+      }} />
       <FlatList
         data={data}
         renderItem={renderItem}

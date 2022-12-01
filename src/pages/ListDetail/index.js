@@ -169,6 +169,31 @@ export default function ListDetail({ navigation, route }) {
                     {item.tanggal}, {item.jam} WIB
                   </Text>
                 </View>
+                <View style={{
+                  flexDirection: 'row'
+                }}>
+                  <Text
+                    style={{
+                      flex: 1,
+                      fontFamily: fonts.secondary[400],
+                      padding: 10,
+                      fontSize: windowWidth / 30,
+                      color: colors.black,
+
+                    }}>
+                    Catatan Pembelian
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: fonts.secondary[200],
+                      padding: 10,
+                      fontSize: windowWidth / 30,
+                      color: colors.black,
+
+                    }}>
+                    {item.catatan}
+                  </Text>
+                </View>
               </View>
 
             )}
