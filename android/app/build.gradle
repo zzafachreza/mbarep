@@ -207,7 +207,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.google.firebase:firebase-analytics:18.0.2'
 
-
+ implementation project(':react-native-bluetooth-escpos-printer')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules

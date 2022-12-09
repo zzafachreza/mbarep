@@ -1,8 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   StyleSheet,
   Text,
+  DeviceEventEmitter,
+  NativeEventEmitter,
+  PermissionsAndroid,
   View,
+  ToastAndroid,
   SafeAreaView,
   FlatList,
   ImageBackground,
@@ -12,7 +16,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import { fonts, windowHeight, windowWidth } from '../../utils/fonts';
-import { colors } from '../../utils/colors';
+import { colors, logoCetak } from '../../utils/colors';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import 'intl';
 import 'intl/locale-data/jsonp/en';
@@ -23,7 +27,13 @@ import { urlAPI } from '../../utils/localStorage';
 import { MyButton, MyGap } from '../../components';
 import ViewShot from "react-native-view-shot";
 import Share from 'react-native-share';
+
+import { BluetoothEscposPrinter, BluetoothManager } from 'react-native-bluetooth-escpos-printer';
+
 export default function ListDetail({ navigation, route }) {
+
+
+
   const [item, setItem] = useState(route.params);
   navigation.setOptions({ title: 'Detail Pesanan' });
   const [data, setData] = useState(route.params);
@@ -31,12 +41,49 @@ export default function ListDetail({ navigation, route }) {
   const [dataDetail, setDataDetail] = useState([]);
   const [link, setLink] = useState('');
   const ref = useRef();
+  const [foundDs, setFoundDs] = useState([]);
+
+  const [printer, setPrinter] = useState({});
+
+
   useEffect(() => {
     DataDetail();
     ref.current.capture().then(uri => {
-      console.log("do something with ", uri);
+      // console.log("do something with ", uri);
       setLink(uri);
     });
+
+
+    BluetoothManager.isBluetoothEnabled().then(res => {
+      // console.log('cek aktif bluetooth', res)
+    });
+
+
+    // BluetoothManager.scanDevices().then(found => {
+    //   // const filtered = JSON.parse(found).found
+    //   // .filter(i => i.name.toUpperCase().indexOf('') > -1);
+    //   console.log('list device', JSON.parse(found).found.filter(i => i.name.toUpperCase().indexOf('') > -1))
+
+    // })
+
+    DeviceEventEmitter.addListener(BluetoothManager.EVENT_DEVICE_ALREADY_PAIRED, rsp => {
+      // console.log('paired',);
+      const filtered = JSON.parse(rsp.devices);
+      var cek = filtered.filter(i => i.name.toUpperCase().indexOf('RPP02N') > -1);
+      setPrinter(cek[0]);
+
+    });
+
+    BluetoothManager.scanDevices().then(s => {
+      // var found = s.found;
+
+      // found = JSON.parse(found); //@FIX_it: the parse action too weired..
+      // console.log(s);
+    });
+
+
+
+
 
   }, []);
   let nama_icon = '';
@@ -49,13 +96,16 @@ export default function ListDetail({ navigation, route }) {
 
 
 
+
+
+
   const DataDetail = () => {
     axios
       .post(urlAPI + '/transaksi_detail.php', {
         kode: item.kode,
       })
       .then(res => {
-        console.warn('detail transaksi', res.data);
+        console.log('detail', res.data)
         setDataDetail(res.data);
         setBuka(true);
       });
@@ -316,21 +366,301 @@ export default function ListDetail({ navigation, route }) {
       }
 
       <View style={{
-        padding: 10
+        padding: 10,
+        flexDirection: 'row'
       }}>
-        <MyButton onPress={() => {
-          // alert(link);
-          // Linking.openURL(link)
+        <View style={{
+          flex: 1,
+          paddingRight: 10,
+        }}>
+          <MyButton onPress={() => {
+            // alert(link);
+            // Linking.openURL(link)
 
-          Share.open({
-            url: link
-          }).then((res) => {
-            console.log(res);
-          }).catch((err) => {
-            err && console.log(err);
-          });
+            Share.open({
+              url: link
+            }).then((res) => {
+              console.log(res);
+            }).catch((err) => {
+              err && console.log(err);
+            });
 
-        }} title='Share Pesanan' warna={colors.primary} colorText={colors.white} Icons="share-social-outline" iconColor={colors.white} />
+          }} title='Share Pesanan' warna={colors.primary} colorText={colors.white} Icons="share-social-outline" iconColor={colors.white} />
+        </View>
+        <View style={{
+          flex: 1,
+          paddingLeft: 10,
+        }}>
+          <MyButton onPress={async () => {
+            BluetoothManager.connect(printer.address)
+              .then(async (s) => {
+                console.log(s);
+
+                // BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
+                // BluetoothEscposPrinter.printPic(logoCetak, { width: 250, left: 50 });
+                // BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
+                // BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
+
+                // await BluetoothEscposPrinter.printColumn(
+                //   [35],
+                //   [BluetoothEscposPrinter.ALIGN.CENTER],
+                //   ['Dusun Krajan, Desa Patik'],
+                //   {},
+                // );
+                // await BluetoothEscposPrinter.printColumn(
+                //   [35],
+                //   [BluetoothEscposPrinter.ALIGN.CENTER],
+                //   ['Kab. Ponorogo, Jatim'],
+                //   {},
+                // );
+
+                // await BluetoothEscposPrinter.printText('\r\n\r\n', {});
+
+
+                let columnWidths = [8, 20, 20];
+                try {
+                  await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
+                  // await BluetoothEscposPrinter.printPic(logoCetak, { width: 250, left: 150 });
+                  await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
+                  await BluetoothEscposPrinter.printColumn(
+                    [15],
+                    [BluetoothEscposPrinter.ALIGN.CENTER],
+                    ['MBAREP GROUP'],
+                    {
+                      encoding: 'GBK',
+                      codepage: 0,
+                      widthtimes: 2,
+                      heigthtimes: 1,
+                      fonttype: 1
+                    },
+                  );
+                  await BluetoothEscposPrinter.printColumn(
+                    [32],
+                    [BluetoothEscposPrinter.ALIGN.CENTER],
+                    ['Dusun krajan, Desa Patik'],
+                    {},
+                  );
+                  await BluetoothEscposPrinter.printColumn(
+                    [32],
+                    [BluetoothEscposPrinter.ALIGN.CENTER],
+                    ['Kecamatan Pulung Ponorogo Jatim'],
+                    {},
+                  );
+                  await BluetoothEscposPrinter.printColumn(
+                    [32],
+                    [BluetoothEscposPrinter.ALIGN.CENTER],
+                    ['Tlp +62 822 2937 3031'],
+                    {},
+                  );
+                  await BluetoothEscposPrinter.printText(
+                    '-------------------------------\r\n',
+                    {},
+                  );
+                  await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.LEFT);
+                  await BluetoothEscposPrinter.printText(
+                    `${item.tanggal} ${item.jam} WIB\r\n`,
+                    {},
+                  );
+                  await BluetoothEscposPrinter.printColumn(
+                    [15, 17],
+                    [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                    ['No. Transaksi', `${item.kode}`],
+                    {},
+                  );
+                  await BluetoothEscposPrinter.printColumn(
+                    [15, 17],
+                    [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                    ['Customer', `${item.nama_customer}`],
+                    {},
+                  );
+                  await BluetoothEscposPrinter.printText(
+                    '-------------------------------\r\n',
+                    {},
+                  );
+
+                  // loopiong
+
+                  dataDetail.map(i => {
+                    BluetoothEscposPrinter.printColumn(
+                      [15, 17],
+                      [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                      [`${i.nama_barang}`, `Rp. ${new Intl.NumberFormat().format(i.harga * i.qty)}`],
+                      {},
+                    );
+                    BluetoothEscposPrinter.printColumn(
+                      [32],
+                      [BluetoothEscposPrinter.ALIGN.LEFT],
+                      [`${new Intl.NumberFormat().format(i.harga)} x ${i.qty}`],
+                      {
+                        fonttype: 3,
+                      },
+                    );
+                  })
+
+                  await BluetoothEscposPrinter.printText(
+                    '-------------------------------\r\n',
+                    {},
+                  );
+                  await BluetoothEscposPrinter.printColumn(
+                    [15, 17],
+                    [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                    ['Total', `Rp. ${new Intl.NumberFormat().format(item.harga_total)}`],
+                    {},
+                  );
+                  await BluetoothEscposPrinter.printText(
+                    '\r\n',
+                    {},
+                  );
+                  await BluetoothEscposPrinter.printText(
+                    '*Catatan\r\n',
+                    {},
+                  );
+                  await BluetoothEscposPrinter.printText(
+                    `${item.catatan}\r\n`,
+                    {},
+                  );
+                  await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
+                  await BluetoothEscposPrinter.printQRCode(
+                    `${item.kode}}`,
+                    280,
+                    BluetoothEscposPrinter.ERROR_CORRECTION.L,
+                  );
+
+                  await BluetoothEscposPrinter.printText(
+                    '\r\n\r\n',
+                    {},
+                  );
+
+                  // loopiong
+
+
+                  // await BluetoothEscposPrinter.printColumn(
+                  //   [24, 24],
+                  //   [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                  //   ['Packaging', 'Iya'],
+                  //   {},
+                  // );
+                  // await BluetoothEscposPrinter.printColumn(
+                  //   [24, 24],
+                  //   [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                  //   ['Delivery', 'Ambil Sendiri'],
+                  //   {},
+                  // );
+                  // await BluetoothEscposPrinter.printText(
+                  //   '================================================',
+                  //   {},
+                  // );
+                  // await BluetoothEscposPrinter.printText('Products\r\n', { widthtimes: 1 });
+                  // await BluetoothEscposPrinter.printText(
+                  //   '================================================',
+                  //   {},
+                  // );
+                  // await BluetoothEscposPrinter.printColumn(
+                  //   columnWidths,
+                  //   [
+                  //     BluetoothEscposPrinter.ALIGN.LEFT,
+                  //     BluetoothEscposPrinter.ALIGN.LEFT,
+                  //     BluetoothEscposPrinter.ALIGN.RIGHT,
+                  //   ],
+                  //   ['1x', 'Cumi-Cumi', 'Rp.200.000'],
+                  //   {},
+                  // );
+                  // await BluetoothEscposPrinter.printColumn(
+                  //   columnWidths,
+                  //   [
+                  //     BluetoothEscposPrinter.ALIGN.LEFT,
+                  //     BluetoothEscposPrinter.ALIGN.LEFT,
+                  //     BluetoothEscposPrinter.ALIGN.RIGHT,
+                  //   ],
+                  //   ['1x', 'Tongkol Kering', 'Rp.300.000'],
+                  //   {},
+                  // );
+                  // await BluetoothEscposPrinter.printColumn(
+                  //   columnWidths,
+                  //   [
+                  //     BluetoothEscposPrinter.ALIGN.LEFT,
+                  //     BluetoothEscposPrinter.ALIGN.LEFT,
+                  //     BluetoothEscposPrinter.ALIGN.RIGHT,
+                  //   ],
+                  //   ['1x', 'Ikan Tuna', 'Rp.400.000'],
+                  //   {},
+                  // );
+                  // await BluetoothEscposPrinter.printText(
+                  //   '================================================',
+                  //   {},
+                  // );
+                  // await BluetoothEscposPrinter.printColumn(
+                  //   [24, 24],
+                  //   [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                  //   ['Subtotal', 'Rp.900.000'],
+                  //   {},
+                  // );
+                  // await BluetoothEscposPrinter.printColumn(
+                  //   [24, 24],
+                  //   [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                  //   ['Packaging', 'Rp.6.000'],
+                  //   {},
+                  // );
+                  // await BluetoothEscposPrinter.printColumn(
+                  //   [24, 24],
+                  //   [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                  //   ['Delivery', 'Rp.0'],
+                  //   {},
+                  // );
+                  // await BluetoothEscposPrinter.printText(
+                  //   '================================================',
+                  //   {},
+                  // );
+                  // await BluetoothEscposPrinter.printColumn(
+                  //   [24, 24],
+                  //   [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                  //   ['Total', 'Rp.906.000'],
+                  //   {},
+                  // );
+                  // await BluetoothEscposPrinter.printText('\r\n\r\n', {});
+                  // await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
+                  // await BluetoothEscposPrinter.printQRCode(
+                  //   'DP0837849839',
+                  //   280,
+                  //   BluetoothEscposPrinter.ERROR_CORRECTION.L,
+                  // );
+                  // await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
+                  // await BluetoothEscposPrinter.printColumn(
+                  //   [48],
+                  //   [BluetoothEscposPrinter.ALIGN.CENTER],
+                  //   ['DP0837849839'],
+                  //   { widthtimes: 2 },
+                  // );
+                  // await BluetoothEscposPrinter.printText(
+                  //   '================================================',
+                  //   {},
+                  // );
+                  // await BluetoothEscposPrinter.printColumn(
+                  //   [48],
+                  //   [BluetoothEscposPrinter.ALIGN.CENTER],
+                  //   ['Sabtu, 18 Juni 2022 - 06:00 WIB'],
+                  //   {},
+                  // );
+                  // await BluetoothEscposPrinter.printText(
+                  //   '================================================',
+                  //   {},
+                  // );
+                  await BluetoothEscposPrinter.printText('\r\n\r\n', {});
+                } catch (e) {
+                  alert(e.message || 'ERROR');
+                }
+
+
+
+              }, (e) => {
+                this.setState({
+                  loading: false
+                })
+                alert(e);
+              })
+
+          }} title='Print Pesanan' warna={colors.danger} colorText={colors.white} Icons="print-outline" iconColor={colors.white} />
+        </View>
       </View>
     </SafeAreaView>
 
