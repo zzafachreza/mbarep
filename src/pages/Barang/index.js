@@ -384,7 +384,7 @@ export default function ({ navigation, route }) {
         // flex: 1,
       }}>
 
-        {total.length > 0 && <MyButton warna={colors.primary} onPress={() => navigation.navigate('Cart')} title={"Rp. " + new Intl.NumberFormat().format(sub) + " - KERANJANG"} Icons="shield-checkmark-outline" />}
+        {total.length > 0 && <MyButton warna={colors.primary} onPress={() => navigation.replace('Cart')} title={"Rp. " + new Intl.NumberFormat().format(sub) + " - KERANJANG"} Icons="shield-checkmark-outline" />}
 
       </View>
       <Modalize

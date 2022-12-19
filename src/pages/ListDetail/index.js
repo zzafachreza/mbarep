@@ -667,9 +667,7 @@ export default function ListDetail({ navigation, route }) {
 
 
               }, (e) => {
-                this.setState({
-                  loading: false
-                })
+
                 alert(e);
               })
 

@@ -74,7 +74,7 @@ export default function Cart({ navigation, route }) {
     if (isFocused) {
 
       getData('user').then(rx => {
-        console.log(rx)
+        // console.log(rx)
         setUser(rx);
         __getDataBarang(rx.id);
       });
@@ -365,6 +365,11 @@ export default function Cart({ navigation, route }) {
 
       <FlatList data={data} renderItem={__renderItem} />
 
+      <Text style={{
+        textAlign: 'center',
+        fontFamily: fonts.secondary[600],
+        fontSize: windowWidth / 20
+      }}>Rp. {new Intl.NumberFormat().format(parseFloat(sub))}</Text>
 
       <Modalize
         withHandle={false}
@@ -518,7 +523,7 @@ export default function Cart({ navigation, route }) {
           {!modal && <View style={{
             flex: 1,
           }}>
-            <MyButton warna={colors.primary} onPress={kirimServer} title={"Rp. " + new Intl.NumberFormat().format(sub) + " - CHECKOUT"} Icons="shield-checkmark-outline" />
+            <MyButton warna={colors.primary} onPress={kirimServer} title={`CHECKOUT`} Icons="shield-checkmark-outline" />
           </View>}
 
         </View>}
