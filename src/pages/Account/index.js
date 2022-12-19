@@ -16,12 +16,23 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
 
+import { BluetoothEscposPrinter, BluetoothManager } from 'react-native-bluetooth-escpos-printer';
+import {
+  USBPrinter,
+  NetPrinter,
+  BLEPrinter,
+} from "react-native-thermal-receipt-printer";
+
 export default function Account({ navigation, route }) {
   const [user, setUser] = useState({});
   const [com, setCom] = useState({});
   const isFocused = useIsFocused();
   const [wa, setWA] = useState('');
 
+  const [paired, setPaired] = useState({
+    device_name: '',
+    inner_mac_address: ''
+  });
 
 
   useEffect(() => {
@@ -30,6 +41,18 @@ export default function Account({ navigation, route }) {
         setUser(res);
         console.error(res);
       });
+
+
+      getData('paired').then(res => {
+        if (!res) {
+          setPaired({
+            device_name: '',
+            inner_mac_address: ''
+          })
+        } else {
+          setPaired(res)
+        }
+      })
 
     }
   }, [isFocused]);
@@ -133,6 +156,62 @@ export default function Account({ navigation, route }) {
               </Text>
             </View>
 
+            <View
+              style={{
+                marginVertical: 3,
+                padding: 10,
+                backgroundColor: colors.white,
+                borderRadius: 10,
+              }}>
+              <Text
+                style={{
+                  fontFamily: fonts.secondary[600],
+                  color: colors.black,
+                }}>
+                Printer
+              </Text>
+              <View style={{
+                flexDirection: 'row'
+              }}>
+                <View style={
+                  {
+                    flex: 1,
+                  }
+                }>
+                  <Text
+                    style={{
+                      fontFamily: fonts.secondary[600],
+                      color: colors.primary,
+                    }}>
+                    {paired.device_name}
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: fonts.secondary[400],
+                      color: colors.black,
+                    }}>
+                    {paired.inner_mac_address}
+                  </Text>
+                </View>
+                <TouchableOpacity onPress={() => navigation.navigate('PrinterBluetooth')} style={{
+                  backgroundColor: colors.danger,
+                  flexDirection: 'row',
+                  width: 80,
+                  justifyContent: 'center',
+                  padding: 5,
+                  borderRadius: 10,
+                  alignItems: 'center'
+                }}>
+                  <Icon type='ionicon' name='print-outline' color={colors.white} />
+                  <Text style={{
+                    left: 5,
+                    fontFamily: fonts.secondary[400],
+                    color: colors.white,
+                  }}>Ubah</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
 
 
 
@@ -170,7 +249,7 @@ export default function Account({ navigation, route }) {
           </View>
         </View>
       </View>
-    </SafeAreaView>
+    </SafeAreaView >
   );
 }
 

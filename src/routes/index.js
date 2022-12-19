@@ -59,6 +59,7 @@ import {
   BarangDetail,
   Customer,
   BarangList,
+  PrinterBluetooth,
 } from '../pages';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomNavigator } from '../components';
@@ -98,6 +99,15 @@ export default function Router() {
         component={Wa}
         options={{
           headerShown: false,
+        }}
+      />
+
+
+      <Stack.Screen
+        name="PrinterBluetooth"
+        component={PrinterBluetooth}
+        options={{
+          headerShown: true,
         }}
       />
 

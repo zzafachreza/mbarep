@@ -48,6 +48,7 @@ import Wishlist from './Wishlist';
 import BarangDetail from './BarangDetail';
 import Customer from './Customer';
 import BarangList from './BarangList';
+import PrinterBluetooth from './PrinterBluetooth';
 
 
 
@@ -107,5 +108,6 @@ export {
   Wishlist,
   BarangDetail,
   Customer,
-  BarangList
+  BarangList,
+  PrinterBluetooth
 };

@@ -55,62 +55,9 @@ export default function ({ navigation, route }) {
     });
   };
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate('ListDetail', item)}
-      style={{
-        padding: 10,
-        flexDirection: 'row',
-        marginVertical: 5,
-        borderBottomWidth: 1,
-        borderBottomColor: colors.border_list
-      }}>
-      <View style={{
-        flex: 1,
-      }}>
-        <Text
-          style={{
-            fontSize: windowWidth / 30,
-            color: colors.black,
-            fontFamily: fonts.secondary[600],
-          }}>
-          {item.kode}
-        </Text>
-        <Text
-          style={{
-            fontSize: windowWidth / 30,
-            color: colors.primary,
-            fontFamily: fonts.secondary[600],
-          }}>
-          {item.nama_customer}
-        </Text>
-        <Text
-          style={{
-            fontSize: windowWidth / 30,
-            color: colors.black,
-            fontFamily: fonts.secondary[400],
-          }}>
-          {item.tanggal}
-        </Text>
-        <Text style={{
-          fontSize: windowWidth / 35,
-          fontFamily: fonts.secondary[200],
-          color: colors.textPrimary,
+  // const renderItem = ({ item }) => (
 
-        }}>{item.catatan}</Text>
-
-
-      </View>
-      <View>
-        <Text style={{
-          fontSize: windowWidth / 25,
-          fontFamily: fonts.secondary[600],
-          color: colors.black,
-        }}> Rp. {new Intl.NumberFormat().format(item.harga_total)}</Text>
-
-      </View>
-    </TouchableOpacity>
-  );
+  // );
 
   return (
     <ScrollView
@@ -145,11 +92,135 @@ export default function ({ navigation, route }) {
         color: colors.black,
         fontFamily: fonts.secondary[600],
       }} />
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-      />
+      {data.map((item, index) => {
+
+        let tgl = '';
+        let mytotal = 0;
+        let jumlahTrx = 0;
+        if (index == 0) {
+          tgl = data[index].tanggal;
+          let tmp = data.filter(i => i.tanggal.toLowerCase().indexOf(data[index].tanggal.toLowerCase()) > -1);
+          tmp.map(i => {
+            mytotal += parseFloat(i.harga_total)
+          })
+          jumlahTrx = tmp.length
+        } else if (data[index - 1].tanggal !== data[index].tanggal) {
+          tgl = data[index].tanggal;
+          let tmp = data.filter(i => i.tanggal.toLowerCase().indexOf(data[index].tanggal.toLowerCase()) > -1);
+          tmp.map(i => {
+            mytotal += parseFloat(i.harga_total)
+          });
+          jumlahTrx = tmp.length;
+
+        } else {
+          tgl = '';
+        }
+
+        return (
+          <>
+            {tgl !== '' && (
+              <View style={{
+                marginTop: 5,
+                paddingVertical: 2,
+                paddingHorizontal: 5,
+                flexDirection: 'row',
+                backgroundColor: colors.border
+              }}>
+                <Text style={{
+                  flex: 1,
+                  fontSize: windowWidth / 30,
+                  fontFamily: fonts.secondary[600],
+                  color: colors.white,
+                }}>{tgl}</Text>
+                <Text style={{
+                  flex: 1,
+                  textAlign: 'center',
+                  fontSize: windowWidth / 30,
+                  fontFamily: fonts.secondary[600],
+                  color: colors.white,
+                }}>{new Intl.NumberFormat().format(mytotal)}</Text>
+                <Text style={{
+                  flex: 1,
+                  textAlign: 'right',
+                  fontSize: windowWidth / 30,
+                  fontFamily: fonts.secondary[600],
+                  color: colors.white,
+                }}>{new Intl.NumberFormat().format(jumlahTrx)}</Text>
+              </View>
+            )}
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ListDetail', item)}
+              style={{
+                paddingHorizontal: 10,
+                flexDirection: 'row',
+                marginVertical: 5,
+                borderBottomWidth: 1,
+                borderBottomColor: colors.border_list
+              }}>
+              <View style={{
+                flex: 1,
+              }}>
+                <Text
+                  style={{
+                    fontSize: windowWidth / 30,
+                    color: colors.black,
+                    fontFamily: fonts.secondary[600],
+                  }}>
+                  {item.kode}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: windowWidth / 30,
+                    color: colors.primary,
+                    fontFamily: fonts.secondary[600],
+                  }}>
+                  {item.nama_customer}
+                </Text>
+                {/* <Text
+                  style={{
+                    fontSize: windowWidth / 30,
+                    color: colors.black,
+                    fontFamily: fonts.secondary[400],
+                  }}>
+                  {item.tanggal}
+                </Text> */}
+                <Text style={{
+                  fontSize: windowWidth / 35,
+                  fontFamily: fonts.secondary[200],
+                  color: colors.textPrimary,
+
+                }}>{item.catatan}</Text>
+
+
+              </View>
+              <View style={{
+                flex: 1,
+              }}>
+                <Text style={{
+                  textAlign: 'center',
+                  fontSize: windowWidth / 35,
+                  fontFamily: fonts.secondary[400],
+                  color: colors.textPrimary,
+
+                }}>{item.jam}</Text>
+              </View>
+              <View style={{
+                flex: 1,
+                alignItems: 'flex-end'
+              }}>
+                <Text style={{
+                  fontSize: windowWidth / 25,
+                  fontFamily: fonts.secondary[600],
+                  color: colors.black,
+                }}> Rp. {new Intl.NumberFormat().format(item.harga_total)}</Text>
+
+
+              </View>
+            </TouchableOpacity>
+          </>
+
+        )
+      })}
     </ScrollView>
   );
 }

@@ -23,15 +23,28 @@ import 'intl/locale-data/jsonp/en';
 import { Icon } from 'react-native-elements';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
-import { urlAPI } from '../../utils/localStorage';
+import { getData, urlAPI } from '../../utils/localStorage';
 import { MyButton, MyGap } from '../../components';
 import ViewShot from "react-native-view-shot";
 import Share from 'react-native-share';
 
 import { BluetoothEscposPrinter, BluetoothManager } from 'react-native-bluetooth-escpos-printer';
 
+
+import {
+  USBPrinter,
+  NetPrinter,
+  BLEPrinter,
+} from "react-native-thermal-receipt-printer";
+import { Alert } from 'react-native';
+
+
 export default function ListDetail({ navigation, route }) {
 
+  const [paired, setPaired] = useState({
+    device_name: '',
+    inner_mac_address: ''
+  });
 
 
   const [item, setItem] = useState(route.params);
@@ -47,42 +60,14 @@ export default function ListDetail({ navigation, route }) {
 
 
   useEffect(() => {
-    DataDetail();
+
     ref.current.capture().then(uri => {
       // console.log("do something with ", uri);
       setLink(uri);
     });
+    DataDetail();
 
-
-    BluetoothManager.isBluetoothEnabled().then(res => {
-      // console.log('cek aktif bluetooth', res)
-    });
-
-
-    // BluetoothManager.scanDevices().then(found => {
-    //   // const filtered = JSON.parse(found).found
-    //   // .filter(i => i.name.toUpperCase().indexOf('') > -1);
-    //   console.log('list device', JSON.parse(found).found.filter(i => i.name.toUpperCase().indexOf('') > -1))
-
-    // })
-
-    DeviceEventEmitter.addListener(BluetoothManager.EVENT_DEVICE_ALREADY_PAIRED, rsp => {
-      // console.log('paired',);
-      const filtered = JSON.parse(rsp.devices);
-      var cek = filtered.filter(i => i.name.toUpperCase().indexOf('RPP02N') > -1);
-      setPrinter(cek[0]);
-
-    });
-
-    BluetoothManager.scanDevices().then(s => {
-      // var found = s.found;
-
-      // found = JSON.parse(found); //@FIX_it: the parse action too weired..
-      // console.log(s);
-    });
-
-
-
+    getPrinter();
 
 
   }, []);
@@ -95,6 +80,35 @@ export default function ListDetail({ navigation, route }) {
   }
 
 
+
+  const getPrinter = () => {
+
+    BluetoothManager.isBluetoothEnabled().then((enabled) => {
+      if (!enabled) {
+        Alert.alert('Mbarep Group', 'Aktfikan Bluetooth untuk print !');
+      } else {
+
+        getData('paired').then(res => {
+          if (!res) {
+            setPaired({
+              device_name: '',
+              inner_mac_address: ''
+            });
+            Alert.alert('Mbarep Group', 'Silahkan pilih printer yang tersedia', [
+              {
+                text: 'Pilih',
+                onPress: () => navigation.navigate('PrinterBluetooth')
+              }
+            ])
+          } else {
+            setPaired(res)
+          }
+        })
+      }
+    });
+
+
+  }
 
 
 
@@ -392,7 +406,7 @@ export default function ListDetail({ navigation, route }) {
           paddingLeft: 10,
         }}>
           <MyButton onPress={async () => {
-            BluetoothManager.connect(printer.address)
+            BluetoothManager.connect(paired.inner_mac_address)
               .then(async (s) => {
                 console.log(s);
 
@@ -520,11 +534,11 @@ export default function ListDetail({ navigation, route }) {
                     {},
                   );
                   await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
-                  await BluetoothEscposPrinter.printQRCode(
-                    `${item.kode}}`,
-                    280,
-                    BluetoothEscposPrinter.ERROR_CORRECTION.L,
-                  );
+                  // await BluetoothEscposPrinter.printQRCode(
+                  //   `${item.kode}}`,
+                  //   280,
+                  //   BluetoothEscposPrinter.ERROR_CORRECTION.L,
+                  // );
 
                   await BluetoothEscposPrinter.printText(
                     '\r\n\r\n',
