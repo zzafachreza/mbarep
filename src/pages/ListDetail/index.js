@@ -298,7 +298,7 @@ export default function ListDetail({ navigation, route }) {
                         fontFamily: fonts.secondary[400],
                         fontSize: windowWidth / 35,
                         color: colors.black,
-                      }}>{new Intl.NumberFormat().format(i.harga)} x {new Intl.NumberFormat().format(i.qty)} <Text style={{
+                      }}>{new Intl.NumberFormat().format(i.harga_dasar)} x {new Intl.NumberFormat().format(i.qty)} <Text style={{
                         fontFamily: fonts.secondary[600],
                         color: colors.primary,
                       }}>{i.uom}</Text></Text>
@@ -314,14 +314,23 @@ export default function ListDetail({ navigation, route }) {
                     <View style={{
                       justifyContent: 'center'
                     }}>
+                      {i.diskon > 0 && <Text
+                        style={{
+                          fontFamily: fonts.secondary[400],
+                          fontSize: windowWidth / 35,
+                          color: colors.danger,
+                          textAlign: 'right'
+
+                        }}>
+                        - {new Intl.NumberFormat().format(parseFloat(i.diskon_total))}
+                      </Text>}
                       <Text style={{
                         fontFamily: fonts.secondary[600],
                         fontSize: windowWidth / 25,
                         color: colors.black,
-                        paddingHorizontal: 10,
-                        borderRadius: 5,
 
-                      }}>Rp. {new Intl.NumberFormat().format(i.harga * i.qty)}</Text>
+                      }}>Rp. {new Intl.NumberFormat().format(i.total)}</Text>
+
                     </View>
                   </View>
                 )
@@ -498,13 +507,15 @@ export default function ListDetail({ navigation, route }) {
                     BluetoothEscposPrinter.printColumn(
                       [15, 17],
                       [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-                      [`${i.nama_barang}`, `Rp. ${new Intl.NumberFormat().format(i.harga * i.qty)}`],
+                      [`${i.nama_barang}`, `Rp. ${new Intl.NumberFormat().format(i.total)}`],
                       {},
                     );
                     BluetoothEscposPrinter.printColumn(
-                      [32],
-                      [BluetoothEscposPrinter.ALIGN.LEFT],
-                      [`${new Intl.NumberFormat().format(i.harga)} x ${i.qty}`],
+                      [23, 12],
+                      [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                      [`${new Intl.NumberFormat().format(i.harga_dasar)} x ${i.qty} ${i.uom}`,
+                      i.diskon > 0 ? `- ${new Intl.NumberFormat().format(i.diskon_total)}` : ``
+                      ],
                       {
                         fonttype: 3,
                       },
@@ -552,22 +563,22 @@ export default function ListDetail({ navigation, route }) {
                   //   [24, 24],
                   //   [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
                   //   ['Packaging', 'Iya'],
-                  //   {},
+                  //   { },
                   // );
                   // await BluetoothEscposPrinter.printColumn(
                   //   [24, 24],
                   //   [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
                   //   ['Delivery', 'Ambil Sendiri'],
-                  //   {},
+                  //   { },
                   // );
                   // await BluetoothEscposPrinter.printText(
                   //   '================================================',
-                  //   {},
+                  //   { },
                   // );
-                  // await BluetoothEscposPrinter.printText('Products\r\n', { widthtimes: 1 });
+                  // await BluetoothEscposPrinter.printText('Products\r\n', {widthtimes: 1 });
                   // await BluetoothEscposPrinter.printText(
                   //   '================================================',
-                  //   {},
+                  //   { },
                   // );
                   // await BluetoothEscposPrinter.printColumn(
                   //   columnWidths,
@@ -577,7 +588,7 @@ export default function ListDetail({ navigation, route }) {
                   //     BluetoothEscposPrinter.ALIGN.RIGHT,
                   //   ],
                   //   ['1x', 'Cumi-Cumi', 'Rp.200.000'],
-                  //   {},
+                  //   { },
                   // );
                   // await BluetoothEscposPrinter.printColumn(
                   //   columnWidths,
@@ -587,7 +598,7 @@ export default function ListDetail({ navigation, route }) {
                   //     BluetoothEscposPrinter.ALIGN.RIGHT,
                   //   ],
                   //   ['1x', 'Tongkol Kering', 'Rp.300.000'],
-                  //   {},
+                  //   { },
                   // );
                   // await BluetoothEscposPrinter.printColumn(
                   //   columnWidths,
@@ -597,41 +608,41 @@ export default function ListDetail({ navigation, route }) {
                   //     BluetoothEscposPrinter.ALIGN.RIGHT,
                   //   ],
                   //   ['1x', 'Ikan Tuna', 'Rp.400.000'],
-                  //   {},
+                  //   { },
                   // );
                   // await BluetoothEscposPrinter.printText(
                   //   '================================================',
-                  //   {},
+                  //   { },
                   // );
                   // await BluetoothEscposPrinter.printColumn(
                   //   [24, 24],
                   //   [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
                   //   ['Subtotal', 'Rp.900.000'],
-                  //   {},
+                  //   { },
                   // );
                   // await BluetoothEscposPrinter.printColumn(
                   //   [24, 24],
                   //   [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
                   //   ['Packaging', 'Rp.6.000'],
-                  //   {},
+                  //   { },
                   // );
                   // await BluetoothEscposPrinter.printColumn(
                   //   [24, 24],
                   //   [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
                   //   ['Delivery', 'Rp.0'],
-                  //   {},
+                  //   { },
                   // );
                   // await BluetoothEscposPrinter.printText(
                   //   '================================================',
-                  //   {},
+                  //   { },
                   // );
                   // await BluetoothEscposPrinter.printColumn(
                   //   [24, 24],
                   //   [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
                   //   ['Total', 'Rp.906.000'],
-                  //   {},
+                  //   { },
                   // );
-                  // await BluetoothEscposPrinter.printText('\r\n\r\n', {});
+                  // await BluetoothEscposPrinter.printText('\r\n\r\n', { });
                   // await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
                   // await BluetoothEscposPrinter.printQRCode(
                   //   'DP0837849839',
@@ -643,21 +654,21 @@ export default function ListDetail({ navigation, route }) {
                   //   [48],
                   //   [BluetoothEscposPrinter.ALIGN.CENTER],
                   //   ['DP0837849839'],
-                  //   { widthtimes: 2 },
+                  //   {widthtimes: 2 },
                   // );
                   // await BluetoothEscposPrinter.printText(
                   //   '================================================',
-                  //   {},
+                  //   { },
                   // );
                   // await BluetoothEscposPrinter.printColumn(
                   //   [48],
                   //   [BluetoothEscposPrinter.ALIGN.CENTER],
                   //   ['Sabtu, 18 Juni 2022 - 06:00 WIB'],
-                  //   {},
+                  //   { },
                   // );
                   // await BluetoothEscposPrinter.printText(
                   //   '================================================',
-                  //   {},
+                  //   { },
                   // );
                   await BluetoothEscposPrinter.printText('\r\n\r\n', {});
                 } catch (e) {

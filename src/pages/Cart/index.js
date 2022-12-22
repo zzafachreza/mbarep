@@ -218,27 +218,7 @@ export default function Cart({ navigation, route }) {
               {item.nama_barang}
             </Text>
 
-            {item.diskon > 0 && <View style={{
-              flexDirection: 'row'
-            }}>
-              <Text
-                style={{
-                  fontFamily: fonts.secondary[400],
-                  textDecorationLine: "line-through",
-                  textDecorationStyle: "solid",
-                  fontSize: windowWidth / 33,
-                  color: colors.black,
 
-                }}>
-                {new Intl.NumberFormat().format(item.harga_dasar)}
-
-              </Text>
-              <Text style={{
-                marginLeft: 5,
-                fontFamily: fonts.secondary[600],
-                color: colors.success
-              }}>{item.diskon}% </Text>
-            </View>}
 
 
             <Text
@@ -248,20 +228,47 @@ export default function Cart({ navigation, route }) {
                 fontSize: windowWidth / 33,
                 color: colors.black
               }}>
-              {new Intl.NumberFormat().format(item.harga)} x {item.qty} {item.uom}
+              {new Intl.NumberFormat().format(item.harga_dasar)} x {item.qty} {item.uom}
+
+              {item.diskon > 0 && <Text style={{
+
+                fontFamily: fonts.secondary[600],
+                color: colors.success
+              }}> {item.diskon}% </Text>}
             </Text>
+
             <View style={{
               flexDirection: 'row'
             }}>
-              <Text
-                style={{
-                  right: 5,
-                  fontFamily: fonts.secondary[600],
-                  fontSize: windowWidth / 25,
-                  color: colors.black,
+              <View>
+                {item.diskon > 0 && <View style={{
+                  flexDirection: 'row'
                 }}>
-                Rp. {new Intl.NumberFormat().format(item.total)}
-              </Text>
+                  {/* <Text
+                    style={{
+                      fontFamily: fonts.secondary[400],
+                      textDecorationLine: "line-through",
+                      textDecorationStyle: "solid",
+                      fontSize: windowWidth / 33,
+                      color: colors.black,
+
+                    }}>
+                    {new Intl.NumberFormat().format(parseFloat(item.total) + parseFloat(item.diskon_peritem))}
+
+                  </Text> */}
+
+                </View>}
+                <Text
+                  style={{
+                    right: 5,
+                    fontFamily: fonts.secondary[600],
+                    fontSize: windowWidth / 25,
+                    color: colors.black,
+                  }}>
+                  Rp. {new Intl.NumberFormat().format(item.total)}
+                </Text>
+
+              </View>
               <TouchableOpacity onPress={() => {
                 setItem(item);
                 setModal(true);
@@ -296,7 +303,7 @@ export default function Cart({ navigation, route }) {
                 fontSize: windowWidth / 25,
                 textAlign: 'center'
               }}>
-              {item.satuan}
+              {item.uom}
             </Text>
             <View style={{
               flexDirection: 'row',

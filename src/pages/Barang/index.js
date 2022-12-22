@@ -15,7 +15,7 @@ import {
 import { storeData, getData, urlAPI } from '../../utils/localStorage';
 import axios from 'axios';
 import { colors } from '../../utils/colors';
-import { windowWidth, fonts } from '../../utils/fonts';
+import { windowWidth, fonts, windowHeight } from '../../utils/fonts';
 import { Icon } from 'react-native-elements';
 import { showMessage } from 'react-native-flash-message';
 import { Modalize } from 'react-native-modalize';
@@ -33,7 +33,14 @@ export default function ({ navigation, route }) {
   const [refreshing, setRefreshing] = React.useState(false);
   const [data, setData] = useState([]);
   const [user, setUser] = useState({});
-  const [show, setShow] = useState({});
+  const [show, setShow] = useState({
+    variant: []
+  });
+  const [diskon, setdiskon] = useState({
+    peritem: 0,
+    total: 0,
+    persen: 0,
+  })
   const [jumlah, setJumlah] = useState(1);
   const [kategori, setKategori] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -78,11 +85,15 @@ export default function ({ navigation, route }) {
     const kirim = {
       fid_user: user.id,
       fid_barang: show.id,
-      harga_dasar: show.harga_dasar,
-      diskon: show.diskon,
-      harga: show.harga_barang,
+      harga_dasar: show.harga_barang,
+      diskon: diskon.persen,
+      diskon_peritem: diskon.peritem,
+      diskon_total: diskon.total,
+      harga: (show.harga_barang * jumlah),
+      uom: show.uom,
       qty: jumlah,
-      total: show.harga_barang * jumlah
+      qty_jual: show.uom == "PCS" ? jumlah : show.qty_jual * jumlah,
+      total: (show.harga_barang * jumlah) - diskon.total
     };
     console.log('kirim tok server', kirim);
     axios
@@ -92,6 +103,11 @@ export default function ({ navigation, route }) {
 
         __transaction();
         setJumlah(1)
+        setdiskon({
+          peritem: 0,
+          total: 0,
+          persen: 0,
+        })
         // navigation.replace('MainApp');
         modalizeRef.current.close();
       });
@@ -167,61 +183,32 @@ export default function ({ navigation, route }) {
             }}>
             {item.satuan}
           </Text>
-          {item.satuan2 !== "" && <Text
-            style={{
-              marginVertical: 5,
-              fontSize: windowWidth / 35,
-              color: colors.white,
-              paddingHorizontal: 5,
-              backgroundColor: colors.primary,
-              borderRadius: 3,
-              marginHorizontal: 2,
-              fontFamily: fonts.secondary[600],
-            }}>
-            {item.satuan2}
-          </Text>}
 
-          {item.satuan3 !== "" && <Text
-            style={{
-              marginVertical: 5,
-              fontSize: windowWidth / 35,
-              color: colors.white,
-              paddingHorizontal: 5,
-              backgroundColor: colors.primary,
-              borderRadius: 3,
-              marginHorizontal: 2,
-              fontFamily: fonts.secondary[600],
-            }}>
-            {item.satuan3}
-          </Text>}
+          {item.variant.length > 0 &&
 
-          {item.satuan4 !== "" && <Text
-            style={{
-              marginVertical: 5,
-              fontSize: windowWidth / 35,
-              color: colors.white,
-              paddingHorizontal: 5,
-              backgroundColor: colors.primary,
-              borderRadius: 3,
-              marginHorizontal: 2,
-              fontFamily: fonts.secondary[600],
-            }}>
-            {item.satuan4}
-          </Text>}
+            item.variant.map(i => {
+              return (
 
-          {item.satuan5 !== "" && <Text
-            style={{
-              marginVertical: 5,
-              fontSize: windowWidth / 35,
-              color: colors.white,
-              paddingHorizontal: 5,
-              backgroundColor: colors.primary,
-              borderRadius: 3,
-              marginHorizontal: 2,
-              fontFamily: fonts.secondary[600],
-            }}>
-            {item.satuan5}
-          </Text>}
+                <Text
+                  style={{
+                    marginVertical: 5,
+                    fontSize: windowWidth / 35,
+                    color: colors.white,
+                    paddingHorizontal: 5,
+                    backgroundColor: colors.primary,
+                    borderRadius: 3,
+                    marginHorizontal: 2,
+                    fontFamily: fonts.secondary[600],
+                  }}>
+                  {i.satuan_variant}
+                </Text>
+
+              )
+            })
+
+
+          }
+
 
 
 
@@ -390,7 +377,7 @@ export default function ({ navigation, route }) {
       <Modalize
         withHandle={false}
         scrollViewProps={{ showsVerticalScrollIndicator: false }}
-        snapPoint={255}
+        snapPoint={windowHeight}
         HeaderComponent={
           <View style={{ padding: 10, backgroundColor: colors.background1, }}>
             <View style={{ flexDirection: 'row' }}>
@@ -410,9 +397,11 @@ export default function ({ navigation, route }) {
                     fontSize: 20,
                     color: colors.textPrimary,
                   }}>
-                  Rp. {new Intl.NumberFormat().format(show.harga_barang * jumlah)}
+                  Rp. {new Intl.NumberFormat().format((show.harga_barang * jumlah) - diskon.total)}
                 </Text>
               </View>
+
+
               <TouchableOpacity onPress={() => modalizeRef.current.close()}>
                 <Icon type="ionicon" name="close-outline" size={35} color={colors.textPrimary} />
               </TouchableOpacity>
@@ -421,8 +410,168 @@ export default function ({ navigation, route }) {
         }
 
         ref={modalizeRef}>
-        <View style={{ flex: 1, height: windowWidth / 2, backgroundColor: colors.background1 }}>
+        <View style={{ flex: 1, height: windowWidth / 1.5, backgroundColor: colors.background1 }}>
           <View style={{ padding: 10, flex: 1 }}>
+
+            {/* uom */}
+            <View style={{
+              flexDirection: 'row'
+            }}>
+
+              <TouchableOpacity onPress={() => {
+                setShow({
+                  ...show,
+                  harga_barang: show.harga_barang_tmp,
+                  uom: show.satuan,
+                  qty_jual: jumlah
+                })
+              }} style={{
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: show.satuan == show.uom ? colors.primary : colors.black,
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+                marginRight: 5,
+              }}>
+                <Text
+                  style={{
+                    fontSize: windowWidth / 30,
+                    color: colors.black,
+                    fontFamily: fonts.secondary[600],
+                  }}>
+                  {show.satuan}
+                </Text>
+                <Text style={{
+                  fontSize: windowWidth / 40,
+                  color: colors.black,
+                  fontFamily: fonts.secondary[400],
+                }}>
+                  1 PCS / Rp. {new Intl.NumberFormat().format(show.harga_barang_tmp)}
+                </Text>
+              </TouchableOpacity>
+
+              {show.variant.length > 0 &&
+
+                show.variant.map(i => {
+                  return (
+                    <TouchableOpacity onPress={() => {
+                      setShow({
+                        ...show,
+                        harga_barang: i.harga_variant,
+                        uom: i.satuan_variant,
+                        qty_jual: i.jumlah_variant
+                      })
+                    }} style={{
+                      borderRadius: 10,
+                      borderWidth: 1,
+                      borderColor: show.uom == i.satuan_variant ? colors.primary : colors.black,
+                      paddingHorizontal: 10,
+                      paddingVertical: 5,
+                      marginRight: 5,
+                    }}>
+                      <Text
+                        style={{
+                          fontSize: windowWidth / 30,
+                          color: colors.black,
+                          fontFamily: fonts.secondary[600],
+                        }}>
+                        {i.satuan_variant}
+                      </Text>
+                      <Text style={{
+                        fontSize: windowWidth / 40,
+                        color: colors.black,
+                        fontFamily: fonts.secondary[400],
+                      }}>
+                        {i.jumlah_variant} PCS / Rp. Rp. {new Intl.NumberFormat().format(i.harga_variant)}
+                      </Text>
+                    </TouchableOpacity>
+                  )
+                })
+              }
+            </View>
+
+            {/* Satuan */}
+
+
+            <View style={{
+              flexDirection: 'row',
+              marginTop: 10,
+              justifyContent: 'space-evenly'
+            }}>
+
+              <View style={{
+                flex: 1,
+              }}>
+                <Text style={{
+                  backgroundColor: colors.danger,
+                  color: colors.white,
+                  fontFamily: fonts.secondary[600],
+                  fontSize: windowWidth / 35,
+                  textAlign: 'center'
+                }}>PER ITEM</Text>
+                <TextInput value={diskon.peritem.toString()} keyboardType='number-pad' style={{
+                  fontFamily: fonts.secondary[600],
+                  textAlign: 'center',
+                  borderBottomWidth: 1,
+                }} onChangeText={x => {
+                  setdiskon({
+                    ...diskon,
+                    peritem: x,
+                    persen: show.harga_barang / x,
+                    total: x * jumlah
+                  })
+                }} />
+              </View>
+              <View style={{
+                flex: 1,
+                paddingHorizontal: 10,
+              }}>
+                <Text style={{
+                  backgroundColor: colors.black,
+                  color: colors.white,
+                  fontFamily: fonts.secondary[600],
+                  fontSize: windowWidth / 35,
+                  textAlign: 'center'
+                }}>Total</Text>
+                <TextInput value={diskon.total.toString()} onChangeText={x => {
+
+                  setdiskon({
+                    ...diskon,
+                    total: x,
+                    persen: (show.harga_barang * jumlah) / x,
+                    peritem: x / jumlah
+                  })
+                }} keyboardType='number-pad' style={{
+                  fontFamily: fonts.secondary[600],
+                  textAlign: 'center',
+                  borderBottomWidth: 1,
+                }} />
+              </View>
+              <View style={{
+                flex: 1,
+              }}>
+                <Text style={{
+                  backgroundColor: colors.success,
+                  color: colors.white,
+                  fontFamily: fonts.secondary[600],
+                  fontSize: windowWidth / 35,
+                  textAlign: 'center'
+                }}>%</Text>
+                <TextInput value={diskon.persen.toString()} onChangeText={x => {
+
+                  setdiskon({
+                    ...diskon,
+                    persen: x,
+                    peritem: show.harga_barang * (x / 100),
+                    total: (show.harga_barang * jumlah) * (x / 100)
+                  })
+                }} keyboardType='number-pad' style={{
+                  fontFamily: fonts.secondary[600],
+                  textAlign: 'center',
+                  borderBottomWidth: 1,
+                }} />
+              </View>
+            </View>
             <View style={{ flexDirection: 'row', marginTop: 20 }}>
               <View style={{ flex: 1 }}>
                 <Text
