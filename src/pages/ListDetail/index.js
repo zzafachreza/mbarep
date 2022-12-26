@@ -85,7 +85,7 @@ export default function ListDetail({ navigation, route }) {
 
     BluetoothManager.isBluetoothEnabled().then((enabled) => {
       if (!enabled) {
-        Alert.alert('Mbarep Group', 'Aktfikan Bluetooth untuk print !');
+        // Alert.alert('Mbarep Group', 'Aktfikan Bluetooth untuk print !');
       } else {
 
         getData('paired').then(res => {
@@ -292,15 +292,15 @@ export default function ListDetail({ navigation, route }) {
                       <Text style={{
                         fontFamily: fonts.secondary[600],
                         fontSize: windowWidth / 35,
-                        color: colors.black,
+                        color: i.retur > 0 ? colors.border : colors.black
                       }}>{i.nama_barang}</Text>
                       <Text style={{
                         fontFamily: fonts.secondary[400],
                         fontSize: windowWidth / 35,
-                        color: colors.black,
+                        color: i.retur > 0 ? colors.border : colors.black
                       }}>{new Intl.NumberFormat().format(i.harga_dasar)} x {new Intl.NumberFormat().format(i.qty)} <Text style={{
                         fontFamily: fonts.secondary[600],
-                        color: colors.primary,
+                        color: i.retur > 0 ? colors.border : colors.primary
                       }}>{i.uom}</Text></Text>
                       <Text style={{
                         fontFamily: fonts.secondary[400],
@@ -327,11 +327,71 @@ export default function ListDetail({ navigation, route }) {
                       <Text style={{
                         fontFamily: fonts.secondary[600],
                         fontSize: windowWidth / 25,
-                        color: colors.black,
+                        color: i.retur > 0 ? colors.border : colors.black,
 
                       }}>Rp. {new Intl.NumberFormat().format(i.total)}</Text>
 
                     </View>
+
+                    {i.retur == 0 && <TouchableOpacity onPress={() => {
+                      Alert.alert('Mbarep Group', `Apakah kamu yakin akan retur ${i.nama_barang} sebanyak ${i.qty} ${i.uom} ?`, [
+                        {
+                          text: 'BATAL',
+                        },
+                        {
+                          text: 'RETUR',
+                          onPress: () => {
+                            const rtr = {
+                              fid_kode: i.kode,
+                              fid_barang: i.fid_barang,
+                              total: i.total,
+                              uom: i.uom,
+                              qty: i.qty,
+                              nama_barang: i.nama_barang,
+                              qty_jual: i.qty_jual,
+                              nama_customer: item.nama_customer,
+                              telepon_customer: item.telepon_customer,
+
+
+                            }
+                            axios.post(urlAPI + '/1add_retur.php', rtr).then(rs => {
+                              console.log(rs.data);
+
+                              DataDetail();
+                            })
+                          }
+                        }
+                      ])
+                    }} style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      padding: 5,
+                      marginLeft: 10,
+                      borderRadius: 10,
+                      backgroundColor: colors.warning
+                    }}>
+                      <Text style={{
+                        fontFamily: fonts.secondary[400],
+                        fontSize: windowWidth / 35,
+                        color: colors.white,
+
+                      }}>Retur</Text>
+                    </TouchableOpacity>}
+
+                    {i.retur > 0 && <View style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      padding: 5,
+                      marginLeft: 10,
+                      borderRadius: 10,
+                    }}>
+                      <Text style={{
+                        fontFamily: fonts.secondary[400],
+                        fontSize: windowWidth / 35,
+                        color: colors.border,
+
+                      }}>Retur</Text>
+                    </View>}
                   </View>
                 )
               })}
@@ -365,7 +425,7 @@ export default function ListDetail({ navigation, route }) {
 
 
             <MyGap jarak={10} />
-
+            {/* 
             {item.status == 'SUDAH DIKIRIM' && (<MyButton onPress={() => {
               axios.post(urlAPI + '/1transaksi_selesai.php', {
                 kode: item.kode
@@ -377,7 +437,7 @@ export default function ListDetail({ navigation, route }) {
                 })
 
               })
-            }} title='Pesanan Selesai' warna={colors.primary} colorText={colors.white} Icons="checkmark-circle" iconColor={colors.white} />)}
+            }} title='Pesanan Selesai' warna={colors.primary} colorText={colors.white} Icons="checkmark-circle" iconColor={colors.white} />)} */}
 
 
 
