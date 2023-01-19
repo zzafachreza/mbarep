@@ -111,14 +111,18 @@ export default function ({ navigation, route }) {
 
     const getDataBarang = (y, z = route.params.key == null ? '' : route.params.key) => {
         setLoading(true);
-        axios.post(urlAPI + '/1data_barang.php', {
-            key: z,
-            key2: y,
-        }).then(res => {
-            setMykey('');
-            console.warn(res.data);
-            setLoading(false);
-            setData(res.data);
+        getData('user').then(u => {
+
+            axios.post(urlAPI + '/1data_barang.php', {
+                key: z,
+                key2: y,
+                fid_user: u.id
+            }).then(res => {
+                setMykey('');
+                console.warn(res.data);
+                setLoading(false);
+                setData(res.data);
+            });
         });
     };
 
@@ -167,61 +171,32 @@ export default function ({ navigation, route }) {
                         }}>
                         {item.satuan}
                     </Text>
-                    {item.satuan2 !== "" && <Text
-                        style={{
-                            marginVertical: 5,
-                            fontSize: windowWidth / 35,
-                            color: colors.white,
-                            paddingHorizontal: 5,
-                            backgroundColor: colors.primary,
-                            borderRadius: 3,
-                            marginHorizontal: 2,
-                            fontFamily: fonts.secondary[600],
-                        }}>
-                        {item.satuan2}
-                    </Text>}
 
-                    {item.satuan3 !== "" && <Text
-                        style={{
-                            marginVertical: 5,
-                            fontSize: windowWidth / 35,
-                            color: colors.white,
-                            paddingHorizontal: 5,
-                            backgroundColor: colors.primary,
-                            borderRadius: 3,
-                            marginHorizontal: 2,
-                            fontFamily: fonts.secondary[600],
-                        }}>
-                        {item.satuan3}
-                    </Text>}
+                    {item.variant.length > 0 &&
 
-                    {item.satuan4 !== "" && <Text
-                        style={{
-                            marginVertical: 5,
-                            fontSize: windowWidth / 35,
-                            color: colors.white,
-                            paddingHorizontal: 5,
-                            backgroundColor: colors.primary,
-                            borderRadius: 3,
-                            marginHorizontal: 2,
-                            fontFamily: fonts.secondary[600],
-                        }}>
-                        {item.satuan4}
-                    </Text>}
+                        item.variant.map(i => {
+                            return (
 
-                    {item.satuan5 !== "" && <Text
-                        style={{
-                            marginVertical: 5,
-                            fontSize: windowWidth / 35,
-                            color: colors.white,
-                            paddingHorizontal: 5,
-                            backgroundColor: colors.primary,
-                            borderRadius: 3,
-                            marginHorizontal: 2,
-                            fontFamily: fonts.secondary[600],
-                        }}>
-                        {item.satuan5}
-                    </Text>}
+                                <Text
+                                    style={{
+                                        marginVertical: 5,
+                                        fontSize: windowWidth / 35,
+                                        color: colors.white,
+                                        paddingHorizontal: 5,
+                                        backgroundColor: colors.primary,
+                                        borderRadius: 3,
+                                        marginHorizontal: 2,
+                                        fontFamily: fonts.secondary[600],
+                                    }}>
+                                    {i.satuan_variant}
+                                </Text>
+
+                            )
+                        })
+
+
+                    }
+
 
 
 
@@ -285,13 +260,14 @@ export default function ({ navigation, route }) {
 
 
             </View>
-            <View style={{
+            {/* <View style={{
                 justifyContent: 'center',
                 alignItems: 'center'
             }}>
                 <TouchableOpacity onPress={() => {
-                    navigation.navigate('BarangDetail', item);
-
+                    // navigation.navigate('BarangDetail', item);
+                    setShow(item)
+                    modalizeRef.current.open();
 
                 }} style={{
                     width: 80,
@@ -307,9 +283,9 @@ export default function ({ navigation, route }) {
                         fontSize: windowWidth / 30,
                         color: colors.primary,
                         fontFamily: fonts.secondary[600],
-                    }}>Detail</Text>
+                    }}>+</Text>
                 </TouchableOpacity>
-            </View>
+            </View> */}
         </View>
     );
 

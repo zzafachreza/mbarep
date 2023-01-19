@@ -127,15 +127,22 @@ export default function ({ navigation, route }) {
 
   const getDataBarang = (y, z = route.params.key == null ? '' : route.params.key) => {
     setLoading(true);
-    axios.post(urlAPI + '/1data_barang.php', {
-      key: z,
-      key2: y,
-    }).then(res => {
-      setMykey('');
-      console.warn(res.data);
-      setLoading(false);
-      setData(res.data);
-    });
+
+    getData('user').then(u => {
+
+      axios.post(urlAPI + '/1data_barang.php', {
+        key: z,
+        key2: y,
+        fid_user: u.id
+      }).then(res => {
+        setMykey('');
+        console.log('data_barang', res.data);
+        setLoading(false);
+        setData(res.data);
+      });
+    })
+
+
   };
 
   const renderItem = ({ item }) => (

@@ -71,7 +71,6 @@ export default function Home({ navigation }) {
 
   const getDataKategori = () => {
     axios.post(urlAPI + '/1data_kategori.php').then(res => {
-      console.log('kategori', res.data);
 
       setKategori(res.data);
     })
