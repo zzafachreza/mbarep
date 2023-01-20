@@ -462,12 +462,21 @@ export default function ({ navigation, route }) {
                 show.variant.map(i => {
                   return (
                     <TouchableOpacity onPress={() => {
-                      setShow({
-                        ...show,
-                        harga_barang: i.harga_variant,
-                        uom: i.satuan_variant,
-                        qty_jual: i.jumlah_variant
-                      })
+                      console.log(show.stok_sales + i.jumlah_variant)
+                      if (parseInt(i.jumlah_variant) <= parseInt(show.stok_sales)) {
+
+                        setShow({
+                          ...show,
+                          harga_barang: i.harga_variant,
+                          uom: i.satuan_variant,
+                          qty_jual: i.jumlah_variant
+                        })
+                      } else {
+                        showMessage({
+                          type: 'danger',
+                          message: 'Maksimal ' + show.stok_sales + ' PCS',
+                        })
+                      }
                     }} style={{
                       borderRadius: 10,
                       borderWidth: 1,
@@ -627,8 +636,13 @@ export default function ({ navigation, route }) {
                 </View>
                 <TouchableOpacity
                   onPress={() => {
+                    jumlah == show.stok_sales
+                      ? showMessage({
+                        type: 'danger',
+                        message: 'Maksimal qty ' + show.stok_sales,
+                      })
+                      : setJumlah(jumlah + 1);
 
-                    setJumlah(jumlah + 1);
                   }}
                   style={{
                     backgroundColor: colors.primary,
