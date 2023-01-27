@@ -283,6 +283,7 @@ export default function ({ navigation, route }) {
         justifyContent: 'center',
         alignItems: 'center'
       }}>
+        <Text>Stok Sales : {item.stok_sales}</Text>
         <TouchableOpacity onPress={() => {
           // navigation.navigate('BarangDetail', item);
           setShow(item)
