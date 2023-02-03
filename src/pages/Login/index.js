@@ -128,6 +128,7 @@ export default function Login({ navigation }) {
           <MyInput
             label="Nomor Telepon"
             iconname="call"
+            placeholder="Masukan nomor telepon"
             value={data.telepon}
             keyboardType="phone-pad"
             onChangeText={value =>
@@ -142,6 +143,7 @@ export default function Login({ navigation }) {
           <MyInput
             label="Password"
             iconname="key"
+            placeholder="Masukan password"
             secureTextEntry={show}
             onChangeText={value =>
               setData({

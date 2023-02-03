@@ -48,7 +48,8 @@ export default function Cart({ navigation, route }) {
     axios.post(urlAPI + '/cart_update.php', {
       id_cart: itemz.id,
       qty: itemz.qty,
-      total: itemz.total
+      total: itemz.total,
+      diskon_total: 0,
     }).then(x => {
       modalizeRef.current.close();
       getData('user').then(tkn => {
@@ -90,7 +91,8 @@ export default function Cart({ navigation, route }) {
       const dd = {
         fid_user: res.id,
         harga_total: sub,
-        berat_total: beratTotal
+        berat_total: beratTotal,
+        diskon_total: 0,
       }
 
       setTimeout(() => {

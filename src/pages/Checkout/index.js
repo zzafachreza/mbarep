@@ -62,6 +62,7 @@ export default function Checkout({ navigation, route }) {
       setKirim({
         ...kirim,
         catatan: '',
+
       })
     });
 
@@ -192,6 +193,14 @@ export default function Checkout({ navigation, route }) {
               catatan: x
             })} placeholder="Masukan catatan untuk pesanan" iconname="create" label="Catatan untuk Pesanan" />
           </View>
+          <View style={{
+            padding: 10,
+          }}>
+            <MyInput value={parseFloat(kirim.diskon_total)} onChangeText={x => setKirim({
+              ...kirim,
+              diskon_total: x
+            })} placeholder="Masukan Diskon Total Rp" keyboardType='number-pad' iconname="create" label="Masukan diskon total" />
+          </View>
 
 
 
@@ -199,14 +208,63 @@ export default function Checkout({ navigation, route }) {
 
         </ScrollView>
 
-        <Text style={{
-          margin: 10,
-          textAlign: 'center',
-          fontFamily: fonts.secondary[600],
-          fontSize: windowWidth / 15
+        <View style={{
+          flexDirection: 'row',
+          marginHorizontal: 10,
         }}>
-          Rp. {new Intl.NumberFormat().format(kirim.harga_total)}
-        </Text>
+          <Text style={{
+            flex: 1,
+            fontFamily: fonts.secondary[400],
+            fontSize: windowWidth / 25
+          }}>
+            Total
+          </Text>
+          <Text style={{
+            textAlign: 'center',
+            fontFamily: fonts.secondary[600],
+            fontSize: windowWidth / 22
+          }}>
+            Rp. {new Intl.NumberFormat().format(kirim.harga_total)}
+          </Text>
+        </View>
+        <View style={{
+          flexDirection: 'row',
+          marginHorizontal: 10,
+        }}>
+          <Text style={{
+            flex: 1,
+            fontFamily: fonts.secondary[400],
+            fontSize: windowWidth / 25
+          }}>
+            Total Diskon
+          </Text>
+          <Text style={{
+            textAlign: 'center',
+            fontFamily: fonts.secondary[400],
+            fontSize: windowWidth / 22
+          }}>
+            -Rp. {new Intl.NumberFormat().format(kirim.diskon_total)}
+          </Text>
+        </View>
+        <View style={{
+          flexDirection: 'row',
+          marginHorizontal: 10,
+        }}>
+          <Text style={{
+            flex: 1,
+            fontFamily: fonts.secondary[400],
+            fontSize: windowWidth / 25
+          }}>
+            Total Transaksi
+          </Text>
+          <Text style={{
+            textAlign: 'center',
+            fontFamily: fonts.secondary[600],
+            fontSize: windowWidth / 20
+          }}>
+            Rp. {new Intl.NumberFormat().format(kirim.harga_total - kirim.diskon_total)}
+          </Text>
+        </View>
         <View style={{ padding: 10, backgroundColor: colors.white, }}>
           <MyButton
             onPress={simpan}

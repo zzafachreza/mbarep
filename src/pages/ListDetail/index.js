@@ -398,29 +398,61 @@ export default function ListDetail({ navigation, route }) {
             </View>
 
             <View style={{
-              backgroundColor: colors.white,
-              marginVertical: 1,
-              paddingBottom: 20,
+              flexDirection: 'row',
+              marginHorizontal: 10,
             }}>
-              <Text
-                style={{
-                  fontFamily: fonts.secondary[600],
-                  padding: 10,
-                  fontSize: windowWidth / 30,
-                  color: colors.black,
-                }}>
+              <Text style={{
+                flex: 1,
+                fontFamily: fonts.secondary[400],
+                fontSize: windowWidth / 25
+              }}>
+                Total
+              </Text>
+              <Text style={{
+                textAlign: 'center',
+                fontFamily: fonts.secondary[600],
+                fontSize: windowWidth / 22
+              }}>
+                Rp. {new Intl.NumberFormat().format(item.beli_total)}
+              </Text>
+            </View>
+            <View style={{
+              flexDirection: 'row',
+              marginHorizontal: 10,
+            }}>
+              <Text style={{
+                flex: 1,
+                fontFamily: fonts.secondary[400],
+                fontSize: windowWidth / 25
+              }}>
+                Total Diskon
+              </Text>
+              <Text style={{
+                textAlign: 'center',
+                fontFamily: fonts.secondary[400],
+                fontSize: windowWidth / 22
+              }}>
+                -Rp. {new Intl.NumberFormat().format(item.diskon_total)}
+              </Text>
+            </View>
+            <View style={{
+              flexDirection: 'row',
+              marginHorizontal: 10,
+            }}>
+              <Text style={{
+                flex: 1,
+                fontFamily: fonts.secondary[400],
+                fontSize: windowWidth / 25
+              }}>
                 Total Transaksi
               </Text>
               <Text style={{
-                fontFamily: fonts.secondary[600],
-                fontSize: windowWidth / 20,
-                color: colors.black,
-                paddingHorizontal: 10,
                 textAlign: 'center',
-                borderRadius: 5,
-
-              }}>Rp. {new Intl.NumberFormat().format(item.harga_total)}</Text>
-
+                fontFamily: fonts.secondary[600],
+                fontSize: windowWidth / 20
+              }}>
+                Rp. {new Intl.NumberFormat().format(item.beli_total - item.diskon_total)}
+              </Text>
             </View>
 
 
@@ -589,7 +621,19 @@ export default function ListDetail({ navigation, route }) {
                   await BluetoothEscposPrinter.printColumn(
                     [15, 17],
                     [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-                    ['Total', `Rp. ${new Intl.NumberFormat().format(item.harga_total)}`],
+                    ['Total', `Rp. ${new Intl.NumberFormat().format(item.beli_total)}`],
+                    {},
+                  );
+                  await BluetoothEscposPrinter.printColumn(
+                    [15, 17],
+                    [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                    ['Diskon', `Rp. ${new Intl.NumberFormat().format(item.diskon_total)}`],
+                    {},
+                  );
+                  await BluetoothEscposPrinter.printColumn(
+                    [15, 17],
+                    [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                    ['Transaksi', `Rp. ${new Intl.NumberFormat().format(item.harga_total)}`],
                     {},
                   );
                   await BluetoothEscposPrinter.printText(
