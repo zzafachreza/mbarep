@@ -97,12 +97,34 @@ export default function Account({ navigation, route }) {
                   fontFamily: fonts.secondary[600],
                   color: colors.black,
                 }}>
+                Level
+              </Text>
+              <Text
+                style={{
+                  fontFamily: fonts.secondary[400],
+                  color: colors.black,
+                }}>
+                {user.level}
+              </Text>
+            </View>
+            <View
+              style={{
+                marginVertical: 3,
+                padding: 10,
+                backgroundColor: colors.white,
+                borderRadius: 10,
+              }}>
+              <Text
+                style={{
+                  fontFamily: fonts.secondary[600],
+                  color: colors.black,
+                }}>
                 Nama Lengkap
               </Text>
               <Text
                 style={{
                   fontFamily: fonts.secondary[400],
-                  color: colors.primary,
+                  color: colors.black,
                 }}>
                 {user.nama_lengkap}
               </Text>
@@ -127,7 +149,7 @@ export default function Account({ navigation, route }) {
               <Text
                 style={{
                   fontFamily: fonts.secondary[400],
-                  color: colors.primary,
+                  color: colors.black,
                 }}>
                 {user.telepon}
               </Text>
@@ -150,7 +172,7 @@ export default function Account({ navigation, route }) {
               <Text
                 style={{
                   fontFamily: fonts.secondary[400],
-                  color: colors.primary,
+                  color: colors.black,
                 }}>
                 {user.alamat}
               </Text>
