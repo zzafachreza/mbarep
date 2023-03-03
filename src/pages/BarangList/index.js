@@ -116,7 +116,8 @@ export default function ({ navigation, route }) {
             axios.post(urlAPI + '/1data_barang.php', {
                 key: z,
                 key2: y,
-                fid_user: u.id
+                fid_user: u.id,
+                level: u.level
             }).then(res => {
                 setMykey('');
                 console.warn(res.data);

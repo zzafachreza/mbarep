@@ -137,7 +137,7 @@ export default function ({ navigation, route }) {
         level: u.level
       }).then(res => {
         setMykey('');
-        console.log('data_barang', res.data);
+        // console.log('data_barang', res.data);
         setLoading(false);
         setData(res.data);
       });

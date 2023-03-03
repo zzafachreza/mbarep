@@ -354,6 +354,8 @@ export default function ListDetail({ navigation, route }) {
 
 
                             }
+
+                            console.log(rtr);
                             axios.post(urlAPI + '/1add_retur.php', rtr).then(rs => {
                               console.log(rs.data);
 
