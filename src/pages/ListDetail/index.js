@@ -23,11 +23,11 @@ import 'intl/locale-data/jsonp/en';
 import { Icon } from 'react-native-elements';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
-import { getData, urlAPI } from '../../utils/localStorage';
+import { getData, urlAPI, urlAPINEW } from '../../utils/localStorage';
 import { MyButton, MyGap } from '../../components';
 import ViewShot from "react-native-view-shot";
 import Share from 'react-native-share';
-
+import { useIsFocused } from '@react-navigation/native';
 import { BluetoothEscposPrinter, BluetoothManager } from 'react-native-bluetooth-escpos-printer';
 
 
@@ -40,6 +40,7 @@ import { Alert } from 'react-native';
 
 
 export default function ListDetail({ navigation, route }) {
+  const isFocused = useIsFocused();
 
   const [paired, setPaired] = useState({
     device_name: '',
@@ -65,12 +66,15 @@ export default function ListDetail({ navigation, route }) {
       // console.log("do something with ", uri);
       setLink(uri);
     });
-    DataDetail();
+
 
     getPrinter();
 
+    if (isFocused) {
+      DataDetail();
+    }
 
-  }, []);
+  }, [isFocused]);
   let nama_icon = '';
 
   if (data.status == "DONE") {
@@ -114,6 +118,18 @@ export default function ListDetail({ navigation, route }) {
 
 
   const DataDetail = () => {
+
+    axios
+      .post(urlAPINEW + 'transaksi_header', {
+        kode: item.kode,
+      })
+      .then(res => {
+        console.log('header', res.data)
+        setItem(res.data);
+        // setBuka(true);
+      });
+
+
     axios
       .post(urlAPI + '/transaksi_detail.php', {
         kode: item.kode,
@@ -157,19 +173,38 @@ export default function ListDetail({ navigation, route }) {
                 <View style={{
                   flexDirection: 'row'
                 }}>
-                  {/* <Text
-                  style={{
-                    flex: 1,
-                    fontFamily: fonts.secondary[600],
-                    padding: 10,
-                    fontSize: windowWidth / 30,
-                    color: colors.black,
-                    borderBottomWidth: 1,
-                    borderBottomColor: colors.border
-                  }}>
-                  {item.status}
-                </Text> */}
+                  <Text
+                    style={{
+                      flex: 1,
+                      fontFamily: fonts.secondary[600],
+                      padding: 10,
+                      fontSize: windowWidth / 30,
+                      color: colors.black,
+                      borderBottomWidth: 1,
+                      borderBottomColor: colors.border
+                    }}>
+                    {item.status}
+                  </Text>
 
+                  {item.status !== 'BATAL' && <TouchableOpacity onPress={() => {
+                    Alert.alert('Batalkan Pesanan', 'Apakah kamu yakin akan membatalkan pesanan ini ? stok akan bertambah kembali', [
+                      { text: 'TIDAK' },
+                      {
+                        text: 'BATALKAN PESANAN', onPress: () => {
+                          axios.post(urlAPINEW + 'transaksi_cancel', {
+                            kode: item.kode
+                          }).then(res => {
+                            console.log(res.data);
+                            DataDetail();
+                          })
+                        }
+                      }
+                    ])
+                  }} style={{
+                    padding: 10,
+                    borderRadius: 20,
+                    backgroundColor: colors.danger
+                  }}><Text style={{ fontFamily: fonts.secondary[600], color: colors.white, textAlign: 'center' }}>Batalkan Pesanan</Text></TouchableOpacity>}
 
                 </View>
 
@@ -195,7 +230,13 @@ export default function ListDetail({ navigation, route }) {
                       color: colors.black,
 
                     }}>
-                    Customer
+                    Customer <TouchableOpacity onPress={() => {
+                      navigation.navigate('CustomerEdit', item)
+                    }} style={{
+                      width: 60,
+                      borderRadius: 20,
+                      backgroundColor: colors.primary
+                    }}><Text style={{ fontFamily: fonts.secondary[600], color: colors.white, textAlign: 'center' }}>Edit</Text></TouchableOpacity>
                   </Text>
                   <Text
                     style={{

@@ -15,9 +15,11 @@ import { storeData, getData, urlAPI } from '../../utils/localStorage';
 import axios from 'axios';
 import { colors } from '../../utils/colors';
 import { windowWidth, fonts } from '../../utils/fonts';
-
+import DatePicker from 'react-native-datepicker'
+import moment from 'moment';
 import 'intl';
 import 'intl/locale-data/jsonp/en';
+import { Icon } from 'react-native-elements';
 const wait = timeout => {
   return new Promise(resolve => {
     setTimeout(resolve, timeout);
@@ -34,6 +36,8 @@ export default function ({ navigation, route }) {
   }, []);
 
   useEffect(() => {
+
+
 
 
 
@@ -55,7 +59,14 @@ export default function ({ navigation, route }) {
     });
   };
 
+
+  const [tanggal, setTanggal] = useState({
+    awal: moment().format('YYYY-MM-DD'),
+    akhir: moment().format('YYYY-MM-DD'),
+  })
+
   // const renderItem = ({ item }) => (
+
 
   // );
 
@@ -72,6 +83,99 @@ export default function ({ navigation, route }) {
         padding: 10,
         backgroundColor: colors.background1,
       }}>
+
+      <View style={{
+        flexDirection: 'row',
+        marginBottom: 10,
+      }}>
+        <View style={{
+          flex: 1,
+          padding: 2,
+        }}>
+          <DatePicker
+            style={{ width: '100%' }}
+            date={tanggal.awal}
+            mode="date"
+            placeholder="select date"
+            format="YYYY-MM-DD"
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+            customStyles={{
+              dateIcon: {
+                position: 'absolute',
+                left: 0,
+                top: 4,
+                marginLeft: 0
+              },
+              dateInput: {
+                marginLeft: 36
+              }
+              // ... You can check the source to find the other keys.
+            }}
+            onDateChange={date => setTanggal({
+              ...tanggal,
+              awal: date
+            })}
+          />
+        </View>
+        <View style={{
+          flex: 1,
+          padding: 2,
+        }}>
+          <DatePicker
+            style={{ width: '100%' }}
+            date={tanggal.akhir}
+            mode="date"
+            placeholder="select date"
+            format="YYYY-MM-DD"
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+            customStyles={{
+              dateIcon: {
+                position: 'absolute',
+                left: 0,
+                top: 4,
+                marginLeft: 0
+              },
+              dateInput: {
+                marginLeft: 36
+              }
+              // ... You can check the source to find the other keys.
+            }}
+            onDateChange={date => setTanggal({
+              ...tanggal,
+              akhir: date
+            })}
+          />
+        </View>
+        <View style={{
+          padding: 2,
+        }}>
+          <TouchableOpacity onPress={() => {
+            console.log(tanggal);
+            getData('user').then(res => {
+              axios
+                .post(urlAPI + '/transaksi.php', {
+                  fid_user: res.id,
+                  awal: tanggal.awal,
+                  akhir: tanggal.akhir
+                })
+                .then(x => {
+                  console.log(x.data);
+                  setData(x.data);
+                });
+            });
+          }} style={{
+            flex: 1,
+            backgroundColor: colors.primary,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingHorizontal: 10,
+          }}>
+            <Icon type='ionicon' name='search' color={colors.white} />
+          </TouchableOpacity>
+        </View>
+      </View>
       <TextInput onChangeText={x => {
 
         const filtered = data.filter(i => i.nama_customer.toLowerCase().indexOf(x.toLowerCase()) > -1)

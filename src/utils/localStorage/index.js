@@ -21,3 +21,4 @@ export const getData = async key => {
 
 
 export const urlAPI = 'https://mbarep.zavalabs.com/api';
+export const urlAPINEW = 'https://mbarep.zavalabs.com/myapi/';

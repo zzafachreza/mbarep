@@ -33,6 +33,7 @@ export default function Checkout({ navigation, route }) {
   const [loading2, setLoading2] = useState(false);
   const [company, setCompany] = useState({});
   const [paket, setPaket] = useState([]);
+  console.log('bayar', route.params)
 
   const [kirim, setKirim] = useState(route.params);
   const [user, setUser] = useState({});
@@ -201,6 +202,25 @@ export default function Checkout({ navigation, route }) {
               diskon_total: x
             })} placeholder="Masukan Diskon Total Rp" keyboardType='number-pad' iconname="create" label="Masukan diskon total" />
           </View>
+          <View style={{
+            padding: 10,
+          }}>
+            <MyInput value={kirim.bayar.toString()} onChangeText={x => {
+              if (parseFloat(x) == parseFloat(kirim.harga_total)) {
+                setKirim({
+                  ...kirim,
+                  bayar: x,
+                  status: 'LUNAS'
+                })
+              } else {
+                setKirim({
+                  ...kirim,
+                  bayar: x,
+                  status: 'BELUM LUNAS'
+                })
+              }
+            }} placeholder="Bayar" keyboardType='number-pad' iconname="create" label="Bayar" />
+          </View>
 
 
 
@@ -217,7 +237,12 @@ export default function Checkout({ navigation, route }) {
             fontFamily: fonts.secondary[400],
             fontSize: windowWidth / 25
           }}>
-            Total
+            Total <Text style={{
+              backgroundColor: colors.danger,
+              paddingHorizontal: 10,
+
+              color: colors.white
+            }}> {kirim.status} </Text>
           </Text>
           <Text style={{
             textAlign: 'center',

@@ -91,8 +91,10 @@ export default function Cart({ navigation, route }) {
       const dd = {
         fid_user: res.id,
         harga_total: sub,
+        bayar: sub,
         berat_total: beratTotal,
         diskon_total: 0,
+        status: 'LUNAS'
       }
 
       setTimeout(() => {

@@ -47,6 +47,7 @@ export default function Customer({ navigation, route }) {
         keterangan_customer: '',
     });
     const [data, setData] = useState([]);
+    const [tmp, setTmp] = useState([]);
 
     const sendToServer = () => {
         setLoading(true);
@@ -106,6 +107,7 @@ export default function Customer({ navigation, route }) {
         axios.post(urlAPI + '/1data_customer.php').then(res => {
             console.log('data customer', res.data);
             setData(res.data);
+            setTmp(res.data)
             setLoading(false);
         })
 
@@ -118,7 +120,24 @@ export default function Customer({ navigation, route }) {
         }}>
             <View style={{
                 padding: 10,
+                backgroundColor: colors.border_list
             }}>
+                <MyInput label="Search" placeholder="Masukan kata kunci" onChangeText={x => {
+                    console.log(x);
+
+                    const filtered = data.filter(i => i.nama_customer.toLowerCase().indexOf(x.toLowerCase()) > -1)
+                    console.log(filtered)
+
+                    if (filtered.length == 0) {
+                        setData(tmp)
+                    } else if (x.length == 0) {
+                        setData(tmp)
+                    } else {
+                        setData(filtered);
+                    }
+
+
+                }} iconname="search" />
                 <Text style={{
                     marginBottom: 10,
                     fontFamily: fonts.secondary[400], fontSize: 13,

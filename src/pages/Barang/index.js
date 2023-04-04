@@ -92,7 +92,7 @@ export default function ({ navigation, route }) {
       harga: (show.harga_barang * jumlah),
       uom: show.uom,
       qty: jumlah,
-      qty_jual: show.uom == "PCS" ? jumlah : show.qty_jual * jumlah,
+      qty_jual: show.uom.toUpperCase() == "PCS" ? jumlah : show.qty_jual * jumlah,
       total: (show.harga_barang * jumlah) - diskon.total
     };
     console.log('kirim tok server', kirim);
@@ -174,6 +174,7 @@ export default function ({ navigation, route }) {
           }}>
           {item.keterangan}
         </Text>
+        <Text>Stok Sales : {item.stok_sales}</Text>
         <View style={{
           flexDirection: 'row',
 
@@ -275,6 +276,12 @@ export default function ({ navigation, route }) {
             fontFamily: fonts.secondary[600],
           }}>
           Rp. {new Intl.NumberFormat().format(item.harga_barang)}
+          <TouchableOpacity onPress={() => {
+            // console.log(item)
+            navigation.navigate('BarangEdit', item)
+          }}>
+            <Icon type='ionicon' name='create' size={15} color={colors.danger} />
+          </TouchableOpacity>
         </Text>
 
 
@@ -284,7 +291,14 @@ export default function ({ navigation, route }) {
         justifyContent: 'center',
         alignItems: 'center'
       }}>
-        <Text>Stok Sales : {item.stok_sales}</Text>
+        <Image source={{
+          uri: item.image
+        }} style={{
+          width: 60,
+          height: 60,
+          resizeMode: 'contain'
+        }} />
+
         <TouchableOpacity onPress={() => {
           // navigation.navigate('BarangDetail', item);
           setShow(item)

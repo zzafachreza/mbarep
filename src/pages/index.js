@@ -49,6 +49,8 @@ import BarangDetail from './BarangDetail';
 import Customer from './Customer';
 import BarangList from './BarangList';
 import PrinterBluetooth from './PrinterBluetooth';
+import CustomerEdit from './CustomerEdit';
+import BarangEdit from './BarangEdit';
 
 
 
@@ -109,5 +111,7 @@ export {
   BarangDetail,
   Customer,
   BarangList,
-  PrinterBluetooth
+  PrinterBluetooth,
+  CustomerEdit,
+  BarangEdit
 };

@@ -60,6 +60,8 @@ import {
   Customer,
   BarangList,
   PrinterBluetooth,
+  CustomerEdit,
+  BarangEdit,
 } from '../pages';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomNavigator } from '../components';
@@ -118,6 +120,8 @@ export default function Router() {
           headerShown: false,
         }}
       />
+
+
 
 
       <Stack.Screen
@@ -889,6 +893,35 @@ export default function Router() {
               },
             };
           },
+        })}
+      />
+
+
+      <Stack.Screen
+        name="CustomerEdit"
+        component={CustomerEdit}
+        options={({ route, navigation }) => ({
+          title: 'EDIT PELANGGAN',
+          headerTintColor: colors.white,
+          headerStyle: {
+            backgroundColor: colors.primary,
+            elevation: 0, // remove shadow on Android
+          },
+
+        })}
+      />
+
+      <Stack.Screen
+        name="BarangEdit"
+        component={BarangEdit}
+        options={({ route, navigation }) => ({
+          title: 'EDIT HARGA',
+          headerTintColor: colors.white,
+          headerStyle: {
+            backgroundColor: colors.primary,
+            elevation: 0, // remove shadow on Android
+          },
+
         })}
       />
 
