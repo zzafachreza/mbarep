@@ -17,6 +17,7 @@ import { colors } from '../../utils/colors';
 import { windowWidth, fonts } from '../../utils/fonts';
 import DatePicker from 'react-native-datepicker'
 import moment from 'moment';
+import { MyPicker } from '../../components';
 import 'intl';
 import 'intl/locale-data/jsonp/en';
 import { Icon } from 'react-native-elements';
@@ -63,6 +64,7 @@ export default function ({ navigation, route }) {
   const [tanggal, setTanggal] = useState({
     awal: moment().format('YYYY-MM-DD'),
     akhir: moment().format('YYYY-MM-DD'),
+    status: 'SEMUA'
   })
 
   // const renderItem = ({ item }) => (
@@ -100,6 +102,7 @@ export default function ({ navigation, route }) {
             format="YYYY-MM-DD"
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
+            showIcon={false}
             customStyles={{
               dateIcon: {
                 position: 'absolute',
@@ -108,7 +111,10 @@ export default function ({ navigation, route }) {
                 marginLeft: 0
               },
               dateInput: {
-                marginLeft: 36
+                marginTop: 10,
+                borderColor: colors.primary,
+                borderRadius: 10,
+                height: 50,
               }
               // ... You can check the source to find the other keys.
             }}
@@ -118,6 +124,7 @@ export default function ({ navigation, route }) {
             })}
           />
         </View>
+
         <View style={{
           flex: 1,
           padding: 2,
@@ -130,6 +137,7 @@ export default function ({ navigation, route }) {
             format="YYYY-MM-DD"
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
+            showIcon={false}
             customStyles={{
               dateIcon: {
                 position: 'absolute',
@@ -138,7 +146,10 @@ export default function ({ navigation, route }) {
                 marginLeft: 0
               },
               dateInput: {
-                marginLeft: 36
+                marginTop: 10,
+                borderColor: colors.primary,
+                borderRadius: 10,
+                height: 50,
               }
               // ... You can check the source to find the other keys.
             }}
@@ -147,6 +158,21 @@ export default function ({ navigation, route }) {
               akhir: date
             })}
           />
+        </View>
+        <View style={{
+          flex: 1,
+          padding: 2,
+        }}>
+          <MyPicker onValueChange={x => setTanggal({
+            ...tanggal,
+            status: x
+          })} value={tanggal.status} data={[
+            { label: 'SEMUA', value: 'SEMUA' },
+            { label: 'LUNAS', value: 'LUNAS' },
+            { label: 'BELUM LUNAS', value: 'BELUM LUNAS' },
+            { label: 'BATAL', value: 'BATAL' },
+
+          ]} nolabel={true} />
         </View>
         <View style={{
           padding: 2,
@@ -158,7 +184,8 @@ export default function ({ navigation, route }) {
                 .post(urlAPI + '/transaksi.php', {
                   fid_user: res.id,
                   awal: tanggal.awal,
-                  akhir: tanggal.akhir
+                  akhir: tanggal.akhir,
+                  status: tanggal.status
                 })
                 .then(x => {
                   console.log(x.data);
@@ -169,6 +196,7 @@ export default function ({ navigation, route }) {
             flex: 1,
             backgroundColor: colors.primary,
             justifyContent: 'center',
+            borderRadius: 5,
             alignItems: 'center',
             paddingHorizontal: 10,
           }}>
@@ -317,6 +345,15 @@ export default function ({ navigation, route }) {
                   fontFamily: fonts.secondary[600],
                   color: colors.black,
                 }}> Rp. {new Intl.NumberFormat().format(item.harga_total)}</Text>
+
+                <Text
+                  style={{
+                    fontSize: windowWidth / 40,
+                    color: item.status == 'LUNAS' ? colors.success : item.status == 'BATAL' ? colors.border : colors.danger,
+                    fontFamily: fonts.secondary[600],
+                  }}>
+                  {item.status}
+                </Text>
 
 
               </View>

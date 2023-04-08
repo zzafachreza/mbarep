@@ -8,6 +8,7 @@ import { TextInput } from 'react-native-gesture-handler';
 export default function MyPicker({
   label,
   iconname,
+  nolabel = false,
   onValueChange,
   onChangeText,
   value,
@@ -22,7 +23,7 @@ export default function MyPicker({
 }) {
   return (
     <>
-      <View
+      {!nolabel && <View
         style={{
           flexDirection: 'row',
           alignItems: 'center',
@@ -39,7 +40,7 @@ export default function MyPicker({
           }}>
           {label}
         </Text>
-      </View>
+      </View>}
       {label2 && (
         <Text
           style={{
