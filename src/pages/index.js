@@ -51,6 +51,7 @@ import BarangList from './BarangList';
 import PrinterBluetooth from './PrinterBluetooth';
 import CustomerEdit from './CustomerEdit';
 import BarangEdit from './BarangEdit';
+import BayarPiutang from './BayarPiutang';
 
 
 
@@ -62,6 +63,7 @@ import BarangEdit from './BarangEdit';
 export {
   Splash,
   SuratIzin,
+  BayarPiutang,
   AddDua,
   AddSatu,
   Add,

@@ -115,6 +115,7 @@ export default function ListDetail({ navigation, route }) {
   }
 
 
+  const [hutang, setHutang] = useState({});
 
 
   const DataDetail = () => {
@@ -124,8 +125,16 @@ export default function ListDetail({ navigation, route }) {
         kode: item.kode,
       })
       .then(res => {
-        console.log('header', res.data)
+        // console.log('header', res.data.status)
         setItem(res.data);
+        if (res.data.status == "BELUM LUNAS") {
+          axios.post(urlAPINEW + 'cek_hutang', {
+            kode: item.kode
+          }).then(hh => {
+            console.log('hutang', hh.data);
+            setHutang(hh.data)
+          })
+        }
         // setBuka(true);
       });
 
@@ -135,7 +144,7 @@ export default function ListDetail({ navigation, route }) {
         kode: item.kode,
       })
       .then(res => {
-        console.log('detail', res.data)
+        // console.log('detail', res.data)
         setDataDetail(res.data);
         setBuka(true);
       });
@@ -497,6 +506,68 @@ export default function ListDetail({ navigation, route }) {
                 Rp. {new Intl.NumberFormat().format(item.beli_total - item.diskon_total)}
               </Text>
             </View>
+
+
+            {item.status == 'BELUM LUNAS' && <View style={{
+              marginTop: 10,
+              borderWidth: 1,
+              padding: 10,
+              borderRadius: 10,
+              borderColor: colors.border_list
+            }}>
+              <View style={{
+                flexDirection: 'row',
+                marginHorizontal: 10,
+              }}>
+                <Text style={{
+                  flex: 1,
+                  fontFamily: fonts.secondary[400],
+                  fontSize: windowWidth / 25
+                }}>
+                  Sudah Bayar
+                </Text>
+                <Text style={{
+                  textAlign: 'center',
+                  fontFamily: fonts.secondary[600],
+                  fontSize: windowWidth / 25,
+                  color: colors.success
+                }}>
+                  Rp. {new Intl.NumberFormat().format(item.bayar)}
+                </Text>
+              </View>
+              <View style={{
+                flexDirection: 'row',
+                marginHorizontal: 10,
+              }}>
+                <Text style={{
+                  flex: 1,
+                  fontFamily: fonts.secondary[400],
+                  fontSize: windowWidth / 25
+                }}>
+                  Sisa
+                </Text>
+                <Text style={{
+                  textAlign: 'center',
+                  fontFamily: fonts.secondary[400],
+                  fontSize: windowWidth / 25,
+                  color: colors.danger
+                }}>
+                  Rp. {new Intl.NumberFormat().format(hutang.total)}
+                </Text>
+              </View>
+              <MyGap jarak={10} />
+              <View style={{
+                paddingHorizontal: 10,
+              }}>
+                <MyButton onPress={() => navigation.navigate('BayarPiutang', {
+                  kode: item.kode,
+                  status: item.status,
+                  total: item.harga_total,
+                  bayar: item.bayar,
+                  sisa: hutang.total
+                })} warna={colors.success} title="Bayar Sisa Hutang" Icons="download-outline" />
+              </View>
+            </View>}
 
 
             <MyGap jarak={10} />

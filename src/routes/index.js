@@ -62,6 +62,7 @@ import {
   PrinterBluetooth,
   CustomerEdit,
   BarangEdit,
+  BayarPiutang,
 } from '../pages';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomNavigator } from '../components';
@@ -104,12 +105,28 @@ export default function Router() {
         }}
       />
 
+      <Stack.Screen
+        name="BayarPiutang"
+        component={BayarPiutang}
+        options={{
+          title: 'Bayar Piutang',
+          headerShown: true,
+          headerTintColor: colors.white,
+          headerStyle: {
+            backgroundColor: colors.primary,
+            colors: colors.white
+          },
+
+        }}
+      />
+
 
       <Stack.Screen
         name="PrinterBluetooth"
         component={PrinterBluetooth}
         options={{
           headerShown: true,
+
         }}
       />
 
