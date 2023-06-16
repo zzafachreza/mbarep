@@ -52,6 +52,7 @@ import PrinterBluetooth from './PrinterBluetooth';
 import CustomerEdit from './CustomerEdit';
 import BarangEdit from './BarangEdit';
 import BayarPiutang from './BayarPiutang';
+import EditTanggal from './EditTanggal';
 
 
 
@@ -115,5 +116,6 @@ export {
   BarangList,
   PrinterBluetooth,
   CustomerEdit,
-  BarangEdit
+  BarangEdit,
+  EditTanggal
 };

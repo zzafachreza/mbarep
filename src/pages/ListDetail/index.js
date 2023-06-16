@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   StyleSheet,
   Text,
+  Modal,
   DeviceEventEmitter,
   NativeEventEmitter,
   PermissionsAndroid,
@@ -24,7 +25,7 @@ import { Icon } from 'react-native-elements';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 import { getData, urlAPI, urlAPINEW } from '../../utils/localStorage';
-import { MyButton, MyGap } from '../../components';
+import { MyButton, MyCalendar, MyGap } from '../../components';
 import ViewShot from "react-native-view-shot";
 import Share from 'react-native-share';
 import { useIsFocused } from '@react-navigation/native';
@@ -37,6 +38,7 @@ import {
   BLEPrinter,
 } from "react-native-thermal-receipt-printer";
 import { Alert } from 'react-native';
+import moment from 'moment';
 
 
 export default function ListDetail({ navigation, route }) {
@@ -46,7 +48,7 @@ export default function ListDetail({ navigation, route }) {
     device_name: '',
     inner_mac_address: ''
   });
-
+  const [modalVisible, setModalVisible] = useState(false);
 
   const [item, setItem] = useState(route.params);
   navigation.setOptions({ title: 'Detail Pesanan' });
@@ -83,6 +85,8 @@ export default function ListDetail({ navigation, route }) {
     nama_icon = 'close-circle-outline';
   }
 
+
+  const [tgl, setTgl] = useState(moment(route.params.tanggal).format('YYYY-MM-DD'));
 
 
   const getPrinter = () => {
@@ -270,7 +274,16 @@ export default function ListDetail({ navigation, route }) {
                       color: colors.black,
 
                     }}>
-                    Tanggal Pembelian
+                    Tanggal Pembelian  <TouchableOpacity onPress={() => {
+
+                      setModalVisible(true);
+
+
+                    }} style={{
+                      width: 60,
+                      borderRadius: 20,
+                      backgroundColor: colors.black
+                    }}><Text style={{ fontFamily: fonts.secondary[600], color: colors.white, textAlign: 'center' }}>Edit</Text></TouchableOpacity>
                   </Text>
                   <Text
                     style={{
@@ -648,7 +661,7 @@ export default function ListDetail({ navigation, route }) {
 
                 let columnWidths = [8, 20, 20];
                 try {
-                  await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
+                  await BluetoothEscposPrinter.printText('\r\n', {});
                   // await BluetoothEscposPrinter.printPic(logoCetak, { width: 250, left: 150 });
                   await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
                   await BluetoothEscposPrinter.printColumn(
@@ -678,7 +691,7 @@ export default function ListDetail({ navigation, route }) {
                   await BluetoothEscposPrinter.printColumn(
                     [32],
                     [BluetoothEscposPrinter.ALIGN.CENTER],
-                    ['Tlp +62 822 2937 3031'],
+                    ['Tlp +62 8233 4520 235'],
                     {},
                   );
                   await BluetoothEscposPrinter.printText(
@@ -903,6 +916,47 @@ export default function ListDetail({ navigation, route }) {
           }} title='Print Pesanan' warna={colors.danger} colorText={colors.white} Icons="print-outline" iconColor={colors.white} />
         </View>
       </View>
+      {/* modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={{
+          backgroundColor: colors.primary,
+          flex: 1,
+          justifyContent: 'center'
+        }}>
+          <View style={{
+            marginHorizontal: 10,
+            height: windowHeight / 4,
+            backgroundColor: colors.white,
+            padding: 20,
+            borderRadius: 10,
+          }}>
+            <MyCalendar label="Tanggal" iconname="calendar" value={tgl} onDateChange={x => setTgl(x)} />
+            <MyGap jarak={10} />
+            <MyButton onPress={() => {
+              setModalVisible(false);
+              axios.post(urlAPI + '/1update_tanggal.php', {
+                tanggal: tgl,
+                kode: item.kode
+              }).then(res => {
+                setItem({
+                  ...item,
+                  tanggal: tgl
+                });
+
+                alert('Transaksi Berhasil di update !')
+                console.log(res.data)
+              })
+            }} title="UPDATE TANGGAL" warna={colors.black} />
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
 
 

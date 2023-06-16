@@ -63,6 +63,7 @@ import {
   CustomerEdit,
   BarangEdit,
   BayarPiutang,
+  EditTanggal,
 } from '../pages';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomNavigator } from '../components';
@@ -434,6 +435,7 @@ export default function Router() {
           headerShown: false,
         }}
       />
+
 
       <Stack.Screen
         name="Search2"
@@ -1029,6 +1031,33 @@ export default function Router() {
         component={ListDetail}
         options={({ route, navigation }) => ({
           title: 'LIST DETAIL',
+          headerTintColor: 'white',
+          headerStyle: {
+            backgroundColor: colors.primary,
+            elevation: 0, // remove shadow on Android
+          },
+          cardStyleInterpolator: ({ current, layouts }) => {
+            return {
+              cardStyle: {
+                transform: [
+                  {
+                    translateX: current.progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [layouts.screen.width, 0],
+                    }),
+                  },
+                ],
+              },
+            };
+          },
+        })}
+      />
+
+      <Stack.Screen
+        name="EditTanggal"
+        component={EditTanggal}
+        options={({ route, navigation }) => ({
+          title: 'Edit Tanggal Transaksi',
           headerTintColor: 'white',
           headerStyle: {
             backgroundColor: colors.primary,

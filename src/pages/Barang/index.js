@@ -68,7 +68,7 @@ export default function ({ navigation, route }) {
       axios.post(urlAPI + '/cart.php', {
         fid_user: res.id
       }).then(x => {
-        console.log('cart', x.data);
+
         setTotal(x.data)
       })
     })
@@ -137,7 +137,7 @@ export default function ({ navigation, route }) {
         level: u.level
       }).then(res => {
         setMykey('');
-        // console.log('data_barang', res.data);
+        console.log('data_barang', res.data);
         setLoading(false);
         setData(res.data);
       });
@@ -645,10 +645,8 @@ export default function ({ navigation, route }) {
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}>
-                  <Text
-                    style={{ fontSize: 16, fontFamily: fonts.secondary[600], color: colors.textPrimary }}>
-                    {jumlah}
-                  </Text>
+
+                  <TextInput keyboardType='number-pad' style={{ fontSize: 18, fontFamily: fonts.secondary[600], color: colors.textPrimary }} onChangeText={x => setJumlah(x)} value={jumlah.toString()} />
                 </View>
                 <TouchableOpacity
                   onPress={() => {
