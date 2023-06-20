@@ -172,10 +172,12 @@ export default function ListDetail({ navigation, route }) {
         <ActivityIndicator color={colors.primary} size="large" />
       </View>}
       {buka &&
-        <ViewShot style={{
-          flex: 1,
-        }} ref={ref} options={{ fileName: item.kode, format: "jpg", quality: 0.9 }}>
-          <ScrollView showsVerticalScrollIndicator={false} style={{ padding: 10, }}>
+        <ScrollView showsVerticalScrollIndicator={false} style={{ padding: 10, }}>
+          <ViewShot style={{
+            flex: 1,
+            backgroundColor: '#FFFFFF'
+          }} ref={ref} options={{ fileName: item.kode, format: "jpg", quality: 0.9, }}>
+
 
             {item.status !== 'PENDING' && (
               <View style={{
@@ -603,8 +605,9 @@ export default function ListDetail({ navigation, route }) {
 
 
             <MyGap jarak={20} />
-          </ScrollView>
-        </ViewShot>
+
+          </ViewShot>
+        </ScrollView>
       }
 
       <View style={{
@@ -638,25 +641,7 @@ export default function ListDetail({ navigation, route }) {
               .then(async (s) => {
                 console.log(s);
 
-                // BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
-                // BluetoothEscposPrinter.printPic(logoCetak, { width: 250, left: 50 });
-                // BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
-                // BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
 
-                // await BluetoothEscposPrinter.printColumn(
-                //   [35],
-                //   [BluetoothEscposPrinter.ALIGN.CENTER],
-                //   ['Dusun Krajan, Desa Patik'],
-                //   {},
-                // );
-                // await BluetoothEscposPrinter.printColumn(
-                //   [35],
-                //   [BluetoothEscposPrinter.ALIGN.CENTER],
-                //   ['Kab. Ponorogo, Jatim'],
-                //   {},
-                // );
-
-                // await BluetoothEscposPrinter.printText('\r\n\r\n', {});
 
 
                 let columnWidths = [8, 20, 20];
