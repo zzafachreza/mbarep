@@ -544,6 +544,7 @@ export default function ({ navigation, route }) {
                 <TextInput value={diskon.peritem.toString()} keyboardType='number-pad' style={{
                   fontFamily: fonts.secondary[600],
                   textAlign: 'center',
+                  color: colors.black,
                   borderBottomWidth: 1,
                 }} onChangeText={x => {
                   setdiskon({
@@ -576,6 +577,7 @@ export default function ({ navigation, route }) {
                 }} keyboardType='number-pad' style={{
                   fontFamily: fonts.secondary[600],
                   textAlign: 'center',
+                  color: colors.black,
                   borderBottomWidth: 1,
                 }} />
               </View>
@@ -600,6 +602,7 @@ export default function ({ navigation, route }) {
                 }} keyboardType='number-pad' style={{
                   fontFamily: fonts.secondary[600],
                   textAlign: 'center',
+                  color: colors.black,
                   borderBottomWidth: 1,
                 }} />
               </View>

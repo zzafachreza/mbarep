@@ -75,7 +75,10 @@ export default function BayarPiutang({ navigation, route }) {
                 }}>Rp. {new Intl.NumberFormat().format(item.total)}</Text>
 
 
-                <MyInput label="Bayar" iconname="create" autoFocus keyboardType='number-pad' value={kirim.sisa} />
+                <MyInput label="Bayar" iconname="create" autoFocus keyboardType='number-pad' onChangeText={x => setKirim({
+                    ...kirim,
+                    sisa: x
+                })} value={kirim.sisa} />
                 <MyGap jarak={10} />
                 <MyButton title="Bayar" warna={colors.primary} Icons="download-outline" onPress={bayarData} />
             </ScrollView>

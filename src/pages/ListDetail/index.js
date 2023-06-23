@@ -15,6 +15,7 @@ import {
   Linking,
   ActivityIndicator,
 } from 'react-native';
+import * as htmlToImage from 'html-to-image';
 import axios from 'axios';
 import { fonts, windowHeight, windowWidth } from '../../utils/fonts';
 import { colors, logoCetak } from '../../utils/colors';
@@ -30,7 +31,6 @@ import ViewShot from "react-native-view-shot";
 import Share from 'react-native-share';
 import { useIsFocused } from '@react-navigation/native';
 import { BluetoothEscposPrinter, BluetoothManager } from 'react-native-bluetooth-escpos-printer';
-
 
 import {
   USBPrinter,
@@ -64,10 +64,6 @@ export default function ListDetail({ navigation, route }) {
 
   useEffect(() => {
 
-    ref.current.capture().then(uri => {
-      // console.log("do something with ", uri);
-      setLink(uri);
-    });
 
 
     getPrinter();
@@ -148,6 +144,10 @@ export default function ListDetail({ navigation, route }) {
         kode: item.kode,
       })
       .then(res => {
+        ref.current.capture().then(uri => {
+          console.log("do something with ", uri);
+          setLink(uri);
+        });
         // console.log('detail', res.data)
         setDataDetail(res.data);
         setBuka(true);
@@ -618,9 +618,11 @@ export default function ListDetail({ navigation, route }) {
           flex: 1,
           paddingRight: 10,
         }}>
-          <MyButton onPress={() => {
-            // alert(link);
-            // Linking.openURL(link)
+          <MyButton onPress={async () => {
+
+
+
+            Linking.openURL(link)
 
             Share.open({
               url: link
