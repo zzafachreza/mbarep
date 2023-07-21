@@ -28,6 +28,7 @@ import { MyButton, MyGap, MyInput } from '../../components';
 import ViewShot from "react-native-view-shot";
 import Share from 'react-native-share';
 import { useIsFocused } from '@react-navigation/native';
+import { Alert } from 'react-native';
 
 export default function BayarPiutang({ navigation, route }) {
     const item = route.params;
@@ -35,12 +36,18 @@ export default function BayarPiutang({ navigation, route }) {
     const [kirim, setKirim] = useState(route.params);
 
     const bayarData = () => {
-        console.log(kirim);
 
-        axios.post(urlAPINEW + 'bayar', kirim).then(res => {
-            console.log(res.data);
-            navigation.goBack();
-        })
+        if (kirim.newbayar.length == 0) {
+            Alert.alert('MBAREP GROUP', 'Nominal bayar harus di isi !')
+        } else {
+            console.log(kirim);
+            axios.post(urlAPINEW + 'bayar', kirim).then(res => {
+                console.log(res.data);
+                navigation.goBack();
+            })
+        }
+
+
     }
 
     return (
@@ -61,24 +68,67 @@ export default function BayarPiutang({ navigation, route }) {
                     fontFamily: fonts.secondary[400],
                     textAlign: 'center',
                     fontSize: 20,
-                    borderBottomWidth: 1,
-                    borderBottomColor: colors.border_list
                 }}>{item.status}</Text>
 
-                <Text style={{
-                    fontFamily: fonts.secondary[600],
-                    fontSize: 20,
-                    textAlign: 'center',
-                    marginVertical: 10,
-                    color: colors.success,
+                <View style={{
+                    flexDirection: 'row',
+                    padding: 10,
+                    borderBottomWidth: 1,
                     borderBottomColor: colors.border_list
-                }}>Rp. {new Intl.NumberFormat().format(item.total)}</Text>
+                }}><Text style={{
+                    fontFamily: fonts.secondary[400],
+                    fontSize: 18,
+                    flex: 1,
+                }}>Total Transaksi</Text>
+                    <Text style={{
+                        fontFamily: fonts.secondary[600],
+                        fontSize: 18,
+                        textAlign: 'center',
+                        color: colors.success,
+                        borderBottomColor: colors.border_list
+                    }}>Rp. {new Intl.NumberFormat().format(item.total)}</Text>
+                </View>
+                <View style={{
+                    flexDirection: 'row',
+                    padding: 10,
+                    borderBottomWidth: 1,
+                    borderBottomColor: colors.border_list
+                }}><Text style={{
+                    fontFamily: fonts.secondary[400],
+                    fontSize: 18,
+                    flex: 1,
+                }}>Sudah Dibayar</Text>
+                    <Text style={{
+                        fontFamily: fonts.secondary[600],
+                        fontSize: 18,
+                        flex: 1,
+                        color: colors.danger,
+                        borderBottomColor: colors.border_list
+                    }}>Rp. {new Intl.NumberFormat().format(item.bayar)}</Text>
+                </View>
+                <View style={{
+                    flexDirection: 'row',
+                    padding: 10,
+                    borderBottomWidth: 1,
+                    borderBottomColor: colors.border_list
+                }}><Text style={{
+                    fontFamily: fonts.secondary[400],
+                    fontSize: 18,
+                    flex: 1,
+                }}>Sisa</Text>
+                    <Text style={{
+                        fontFamily: fonts.secondary[600],
+                        fontSize: 18,
+                        color: colors.black,
+                        borderBottomColor: colors.border_list
+                    }}>Rp. {new Intl.NumberFormat().format(item.total - item.bayar)}</Text>
+                </View>
 
 
                 <MyInput label="Bayar" iconname="create" autoFocus keyboardType='number-pad' onChangeText={x => setKirim({
                     ...kirim,
-                    sisa: x
-                })} value={kirim.sisa} />
+                    newbayar: x
+                })} value={kirim.newbayar} />
                 <MyGap jarak={10} />
                 <MyButton title="Bayar" warna={colors.primary} Icons="download-outline" onPress={bayarData} />
             </ScrollView>

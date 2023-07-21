@@ -116,7 +116,7 @@ export default function ListDetail({ navigation, route }) {
 
 
   const [hutang, setHutang] = useState({});
-
+  const [dataHutang, setDatahutang] = useState([]);
 
   const DataDetail = () => {
 
@@ -125,13 +125,23 @@ export default function ListDetail({ navigation, route }) {
         kode: item.kode,
       })
       .then(res => {
+
+        axios.post(urlAPINEW + 'hutang_data', {
+          kode: item.kode
+        }).then(hh => {
+          console.log('data hutang', hh.data);
+          setDatahutang(hh.data)
+
+        })
+
+
         // console.log('header', res.data.status)
         setItem(res.data);
         if (res.data.status == "BELUM LUNAS") {
           axios.post(urlAPINEW + 'cek_hutang', {
             kode: item.kode
           }).then(hh => {
-            console.log('hutang', hh.data);
+
             setHutang(hh.data)
           })
         }
@@ -522,6 +532,50 @@ export default function ListDetail({ navigation, route }) {
               </Text>
             </View>
 
+            <View style={{
+              margin: 10,
+              borderWidth: 1,
+              borderRadius: 10,
+              borderColor: colors.primary,
+              padding: 10,
+            }}>
+              <Text style={{
+                fontFamily: fonts.secondary[800],
+                fontSize: windowWidth / 25,
+                color: colors.primary,
+              }}>
+                Riwayat Bayar
+              </Text>
+
+              <View>
+                {dataHutang.length > 0 && dataHutang.map(i => {
+                  return (
+                    <View style={{
+                      flexDirection: 'row',
+                      borderBottomWidth: 1,
+                      borderBottomColor: colors.border_list
+                    }}>
+                      <Text style={{
+                        flex: 1,
+                        fontFamily: fonts.secondary[400],
+                        fontSize: 14,
+                        marginVertical: 5,
+                      }}>
+                        {moment(i.tanggal).format('YYYY-MM-DD')}
+                      </Text>
+                      <Text style={{
+                        fontFamily: fonts.secondary[600],
+                        fontSize: 14,
+                        marginVertical: 5,
+                        color: colors.black
+                      }}>
+                        Rp. {new Intl.NumberFormat().format(i.total)}
+                      </Text>
+                    </View>
+                  )
+                })}
+              </View>
+            </View>
 
             {item.status == 'BELUM LUNAS' && <View style={{
               marginTop: 10,
@@ -567,7 +621,7 @@ export default function ListDetail({ navigation, route }) {
                   fontSize: windowWidth / 25,
                   color: colors.danger
                 }}>
-                  Rp. {new Intl.NumberFormat().format(hutang.total)}
+                  Rp. {new Intl.NumberFormat().format((item.beli_total - item.diskon_total) - hutang.total)}
                 </Text>
               </View>
               <MyGap jarak={10} />
