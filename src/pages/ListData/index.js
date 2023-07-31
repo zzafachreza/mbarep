@@ -233,14 +233,19 @@ export default function ({ navigation, route }) {
           tgl = data[index].tanggal;
           let tmp = data.filter(i => i.tanggal.toLowerCase().indexOf(data[index].tanggal.toLowerCase()) > -1);
           tmp.map(i => {
-            mytotal += parseFloat(i.harga_total)
+            if (i.status == 'LUNAS') {
+              mytotal += parseFloat(i.harga_total)
+            }
+
           })
           jumlahTrx = tmp.length
         } else if (data[index - 1].tanggal !== data[index].tanggal) {
           tgl = data[index].tanggal;
           let tmp = data.filter(i => i.tanggal.toLowerCase().indexOf(data[index].tanggal.toLowerCase()) > -1);
           tmp.map(i => {
-            mytotal += parseFloat(i.harga_total)
+            if (i.status == 'LUNAS') {
+              mytotal += parseFloat(i.harga_total)
+            }
           });
           jumlahTrx = tmp.length;
 
