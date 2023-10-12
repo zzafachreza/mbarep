@@ -726,7 +726,7 @@ export default function ListDetail({ navigation, route }) {
                   await BluetoothEscposPrinter.printColumn(
                     [32],
                     [BluetoothEscposPrinter.ALIGN.CENTER],
-                    ['Kecamatan Pulung Ponorogo Jatim'],
+                    ['Ponorogo Jatim'],
                     {},
                   );
                   await BluetoothEscposPrinter.printColumn(
