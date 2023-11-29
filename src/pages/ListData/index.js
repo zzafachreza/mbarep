@@ -224,8 +224,8 @@ export default function ({ navigation, route }) {
         color: colors.black,
         fontFamily: fonts.secondary[600],
       }} />
-      {data.map((item, index) => {
 
+      <FlatList data={data} renderItem={({ item, index }) => {
         let tgl = '';
         let mytotal = 0;
         let jumlahTrx = 0;
@@ -366,7 +366,7 @@ export default function ({ navigation, route }) {
           </>
 
         )
-      })}
+      }} />
     </ScrollView>
   );
 }
