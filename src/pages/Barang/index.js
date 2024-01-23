@@ -261,6 +261,10 @@ export default function ({ navigation, route }) {
             }}>
             Disc {new Intl.NumberFormat().format(item.diskon)}%
           </Text>}
+
+
+
+
         </View>
 
 
@@ -299,27 +303,45 @@ export default function ({ navigation, route }) {
           resizeMode: 'contain'
         }} />
 
-        <TouchableOpacity onPress={() => {
-          // navigation.navigate('BarangDetail', item);
-          setShow(item)
-          modalizeRef.current.open();
+        {item.stok_sales > 0 &&
 
-        }} style={{
-          width: 80,
-          borderRadius: 20,
-          borderWidth: 2,
-          borderColor: colors.primary,
-          marginVertical: 20,
-          justifyContent: 'center',
-          alignItems: 'center',
-          paddingVertical: 5,
-        }}>
+          <TouchableOpacity onPress={() => {
+            // navigation.navigate('BarangDetail', item);
+            setShow(item)
+            modalizeRef.current.open();
+
+          }} style={{
+            width: 80,
+            borderRadius: 20,
+            borderWidth: 2,
+            borderColor: colors.primary,
+            marginVertical: 20,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingVertical: 5,
+          }}>
+            <Text style={{
+              fontSize: windowWidth / 30,
+              color: colors.primary,
+              fontFamily: fonts.secondary[600],
+            }}>+</Text>
+          </TouchableOpacity>
+
+        }
+
+
+        {item.stok_sales == 0 &&
+
+
           <Text style={{
             fontSize: windowWidth / 30,
-            color: colors.primary,
+            color: colors.danger,
             fontFamily: fonts.secondary[600],
-          }}>+</Text>
-        </TouchableOpacity>
+          }}>Stok Kosong</Text>
+
+
+        }
+
       </View>
     </View>
   );
