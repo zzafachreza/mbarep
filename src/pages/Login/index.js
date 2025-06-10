@@ -19,7 +19,7 @@ import axios from 'axios';
 import { storeData, getData, urlAPI } from '../../utils/localStorage';
 import { showMessage } from 'react-native-flash-message';
 import { Icon } from 'react-native-elements';
-
+import FastImage from 'react-native-fast-image'
 
 export default function Login({ navigation }) {
   const windowWidth = Dimensions.get('window').width;
@@ -101,15 +101,25 @@ export default function Login({ navigation }) {
             alignItems: 'center',
             padding: 30,
           }}>
-          <Image
-            source={require('../../assets/logo.png')}
-            style={{
-              width: 120,
-              height: 150,
-              resizeMode: 'contain'
-              // aspectRatio: 1,
-            }}
-          />
+          <View style={{
+            width: 160,
+            height: 160,
+            backgroundColor: colors.tertiary,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 100
+          }}>
+            <FastImage
+              resizeMode={FastImage.resizeMode.contain}
+              source={require('../../assets/logo.png')}
+              style={{
+                width: 150,
+                height: 150,
+
+                // aspectRatio: 1,
+              }}
+            />
+          </View>
         </View>
         <View style={styles.page}>
           <Text

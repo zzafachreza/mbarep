@@ -27,7 +27,7 @@ import 'intl/locale-data/jsonp/en';
 import { showMessage } from 'react-native-flash-message';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Modalize } from 'react-native-modalize';
-
+import FastImage from 'react-native-fast-image'
 export default function Cart({ navigation, route }) {
   const [user, setUser] = useState({});
   const [data, setData] = useState([]);
@@ -156,6 +156,7 @@ export default function Cart({ navigation, route }) {
     axios.post(urlAPI + '/cart.php', {
       fid_user: zz
     }).then(x => {
+      console.log('cart', x.data)
       setData(x.data);
     })
 
@@ -203,7 +204,7 @@ export default function Cart({ navigation, route }) {
           <View style={{
             paddingHorizontal: 10,
           }}>
-            <Image style={{
+            <FastImage style={{
               width: 50, height: 50,
               borderRadius: 5,
             }} source={{

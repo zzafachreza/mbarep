@@ -23,6 +23,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { MyButton } from '../../components';
 import 'intl';
 import 'intl/locale-data/jsonp/en';
+import FastImage from 'react-native-fast-image'
 const wait = timeout => {
     return new Promise(resolve => {
         setTimeout(resolve, timeout);
@@ -49,23 +50,10 @@ export default function ({ navigation, route }) {
     var sub = 0;
     const [total, setTotal] = useState([]);
     useEffect(() => {
-        if (isFocused) {
-            __transaction();
-        }
         getDataBarang();
-    }, [isFocused]);
+    }, []);
+    const ITEM_HEIGHT = 50;
 
-    const __transaction = () => {
-        getData('user').then(res => {
-            setUser(res);
-            axios.post(urlAPI + '/cart.php', {
-                fid_user: res.id
-            }).then(x => {
-                console.log('cart', x.data);
-                setTotal(x.data)
-            })
-        })
-    }
 
     total.map((item, key) => {
         sub += parseFloat(item.total);
@@ -74,28 +62,7 @@ export default function ({ navigation, route }) {
 
 
 
-    const addToCart = () => {
-        const kirim = {
-            fid_user: user.id,
-            fid_barang: show.id,
-            harga_dasar: show.harga_dasar,
-            diskon: show.diskon,
-            harga: show.harga_barang,
-            qty: jumlah,
-            total: show.harga_barang * jumlah
-        };
-        console.log('kirim tok server', kirim);
-        axios
-            .post(urlAPI + '/1add_cart.php', kirim)
-            .then(res => {
-                // console.log(res.data);
 
-                __transaction();
-                setJumlah(1)
-                // navigation.replace('MainApp');
-                modalizeRef.current.close();
-            });
-    };
 
     const modalizeRef = useRef();
 
@@ -112,7 +79,6 @@ export default function ({ navigation, route }) {
     const getDataBarang = (y, z = route.params.key == null ? '' : route.params.key) => {
         setLoading(true);
         getData('user').then(u => {
-
             axios.post(urlAPI + '/1data_barang.php', {
                 key: z,
                 key2: y,
@@ -261,32 +227,23 @@ export default function ({ navigation, route }) {
 
 
             </View>
-            {/* <View style={{
+            <View style={{
                 justifyContent: 'center',
                 alignItems: 'center'
             }}>
-                <TouchableOpacity onPress={() => {
-                    // navigation.navigate('BarangDetail', item);
-                    setShow(item)
-                    modalizeRef.current.open();
-
-                }} style={{
-                    width: 80,
-                    borderRadius: 20,
-                    borderWidth: 2,
-                    borderColor: colors.primary,
-                    marginVertical: 20,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    paddingVertical: 5,
-                }}>
-                    <Text style={{
-                        fontSize: windowWidth / 30,
-                        color: colors.primary,
-                        fontFamily: fonts.secondary[600],
-                    }}>+</Text>
-                </TouchableOpacity>
-            </View> */}
+                <FastImage
+                    resizeMode={FastImage.resizeMode.contain}
+                    style={{
+                        width: 80,
+                        height: 80
+                    }}
+                    source={{
+                        uri: item.image == 'https://mbarep.zavalabs.com/' ? 'https://zavalabs.com/noimage.png' : item.image,
+                        priority: FastImage.priority.normal,
+                        cache: FastImage.cacheControl.immutable,
+                    }}
+                />
+            </View>
         </View>
     );
 
@@ -348,12 +305,28 @@ export default function ({ navigation, route }) {
                     <ActivityIndicator size="large" color={colors.primary} /></View>}
 
 
-                {!loading && <FlatList
-                    showsVerticalScrollIndicator={false}
-                    data={data}
-                    renderItem={renderItem}
-                    keyExtractor={item => item.id}
-                />}
+                {!loading && (
+                    <FlatList
+                        data={data}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.id.toString()}
+                        showsVerticalScrollIndicator={false}
+
+                        // ⚡ Optimasi performa
+                        initialNumToRender={10} // jumlah item pertama kali dirender
+                        maxToRenderPerBatch={10} // jumlah item yang dirender per batch
+                        windowSize={5} // area buffer (default 21, makin kecil makin hemat)
+                        removeClippedSubviews={true} // optimalkan saat scroll
+
+                        // Jika item tetap tinggi dan seragam
+                        getItemLayout={(data, index) => ({
+                            length: ITEM_HEIGHT,
+                            offset: ITEM_HEIGHT * index,
+                            index,
+                        })}
+                    />
+                )}
+
 
             </View>
 

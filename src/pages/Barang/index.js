@@ -22,6 +22,7 @@ import { Modalize } from 'react-native-modalize';
 import { useIsFocused } from '@react-navigation/native';
 import { MyButton } from '../../components';
 import 'intl';
+import FastImage from 'react-native-fast-image'
 import 'intl/locale-data/jsonp/en';
 const wait = timeout => {
   return new Promise(resolve => {
@@ -295,13 +296,19 @@ export default function ({ navigation, route }) {
         justifyContent: 'center',
         alignItems: 'center'
       }}>
-        <Image source={{
-          uri: item.image
-        }} style={{
-          width: 60,
-          height: 60,
-          resizeMode: 'contain'
-        }} />
+        <FastImage resizeMode={FastImage.resizeMode.contain}
+
+          source={{
+            uri: item.image == 'https://mbarep.zavalabs.com/' ? 'https://zavalabs.com/noimage.png' : item.image,
+            priority: FastImage.priority.normal,
+            cache: FastImage.cacheControl.immutable,
+          }}
+
+          style={{
+            width: 60,
+            height: 60,
+
+          }} />
 
         {item.stok_sales > 0 &&
 
@@ -455,7 +462,7 @@ export default function ({ navigation, route }) {
         }
 
         ref={modalizeRef}>
-        <View style={{ flex: 1, height: windowWidth / 1.5, backgroundColor: colors.background1 }}>
+        <View style={{ flex: 1, height: windowHeight / 2, backgroundColor: colors.background1 }}>
           <View style={{ padding: 10, flex: 1 }}>
 
             {/* uom */}
@@ -698,20 +705,20 @@ export default function ({ navigation, route }) {
             </View>
 
 
-            <View style={{ marginTop: 15 }}>
+            <View style={{ marginTop: 10 }}>
               <TouchableOpacity
                 onPress={addToCart}
                 style={{
                   backgroundColor: colors.primary,
                   borderRadius: 10,
-                  padding: 15,
+                  padding: 10,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
                 <Text
                   style={{
                     fontFamily: fonts.secondary[600],
-                    fontSize: windowWidth / 22,
+                    fontSize: windowWidth / 25,
                     color: colors.white,
                   }}>
                   SIMPAN

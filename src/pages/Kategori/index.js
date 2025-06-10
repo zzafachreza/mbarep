@@ -18,7 +18,8 @@ import { Icon } from 'react-native-elements';
 import axios from 'axios';
 import 'intl';
 import 'intl/locale-data/jsonp/en';
-
+import FastImage from 'react-native-fast-image'
+import { useCallback } from 'react';
 export default function Kategori({ navigation }) {
   const [kategori, setKategori] = useState([]);
 
@@ -36,49 +37,60 @@ export default function Kategori({ navigation }) {
   }, [])
 
 
-  const __renderItem = ({ item }) => {
+  const __renderItem = useCallback(({ item }) => {
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('BarangList', {
-        key: item.id
-      })} style={{
-        padding: 10,
-        paddingTop: 5,
-        flex: 1,
-        backgroundColor: '#97C1E4',
-        margin: 5,
-        borderRadius: 10,
-
-      }}>
-
-        <View style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-          <Image style={{
-            width: '100%',
-            height: 150,
-            resizeMode: 'contain'
-
-          }} source={{
-            uri: item.image
-          }} />
+      <TouchableOpacity onPress={() => navigation.navigate('BarangList', { key: item.id })} style={styles.itemContainer}>
+        <View style={styles.imageWrapper}>
+          <FastImage
+            resizeMode={FastImage.resizeMode.contain}
+            style={styles.image}
+            source={{
+              uri: item.image == 'https://mbarep.zavalabs.com/' ? 'https://zavalabs.com/noimage.png' : item.image,
+              priority: FastImage.priority.normal,
+              cache: FastImage.cacheControl.immutable,
+            }}
+          />
         </View>
-        <Text style={{
-          textAlign: 'center',
-          color: colors.black,
-          fontFamily: fonts.secondary[600],
-          fontSize: windowWidth / 30,
-        }}>{item.nama_kategori}</Text>
+        <Text style={styles.text}>{item.nama_kategori}</Text>
       </TouchableOpacity>
-    )
-  }
+    );
+  }, [navigation]);
   return (
     <View style={{
-      flex: 1
+      flex: 1,
+      backgroundColor: colors.white
     }}>
-      <FlatList numColumns={2} data={kategori} renderItem={__renderItem} />
+      <FlatList
+        numColumns={2}
+        data={kategori}
+        renderItem={__renderItem}
+        keyExtractor={(item) => item.id.toString()}
+      />
     </View>
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  itemContainer: {
+    padding: 10,
+    paddingTop: 5,
+    flex: 1,
+    backgroundColor: '#97C1E4',
+    margin: 5,
+    borderRadius: 10,
+  },
+  imageWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    width: '100%',
+    height: 150,
+  },
+  text: {
+    textAlign: 'center',
+    color: colors.black,
+    fontFamily: fonts.secondary[600],
+    fontSize: windowWidth / 30,
+  }
+});

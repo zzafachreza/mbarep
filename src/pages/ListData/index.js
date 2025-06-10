@@ -299,7 +299,7 @@ export default function ({ navigation, route }) {
               }}>
                 <Text
                   style={{
-                    fontSize: windowWidth / 30,
+                    fontSize: windowWidth / 35,
                     color: colors.black,
                     fontFamily: fonts.secondary[600],
                   }}>
@@ -307,7 +307,7 @@ export default function ({ navigation, route }) {
                 </Text>
                 <Text
                   style={{
-                    fontSize: windowWidth / 30,
+                    fontSize: windowWidth / 33,
                     color: colors.primary,
                     fontFamily: fonts.secondary[600],
                   }}>
@@ -346,7 +346,7 @@ export default function ({ navigation, route }) {
                 alignItems: 'flex-end'
               }}>
                 <Text style={{
-                  fontSize: windowWidth / 25,
+                  fontSize: windowWidth / 30,
                   fontFamily: fonts.secondary[600],
                   color: colors.black,
                 }}> Rp. {new Intl.NumberFormat().format(item.harga_total)}</Text>

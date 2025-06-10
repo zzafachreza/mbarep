@@ -145,7 +145,7 @@ export default function Customer({ navigation, route }) {
                 }}>Customer Dipilih : <Text style={{
                     fontFamily: fonts.secondary[600], fontSize: 16,
                 }}>{customer.nama_customer}</Text></Text>
-                <MyButton onPress={() => setOpen(true)} title="Tambah Customer" warna={colors.secondary} Icons="add" />
+                <MyButton onPress={() => setOpen(true)} title="Tambah Customer" warna={colors.primary} Icons="add" />
             </View>
             {loading && <View style={{
                 justifyContent: 'center',
@@ -161,153 +161,169 @@ export default function Customer({ navigation, route }) {
 
                 {!loading &&
 
-                    <FlatList data={data} renderItem={({ item }) => {
-                        return (
-                            <View key={item.id_customer} style={{
-                                marginHorizontal: 10,
-                                marginVertical: 5,
-                                borderRadius: 5,
-                                borderWidth: 1,
-                                borderColor: customer == item.nama_customer ? colors.success : colors.black,
-                                padding: 10,
-                                flexDirection: 'row',
-                                marginBottom: 5,
-                            }}>
+                    <FlatList
+                        initialNumToRender={10} // jumlah item pertama kali dirender
+                        maxToRenderPerBatch={10} // jumlah item yang dirender per batch
 
-                                <View style={{
-                                    flex: 1
+                        removeClippedSubviews={true} // optimalkan saat scroll
+
+
+                        data={data} renderItem={({ item }) => {
+                            return (
+                                <View key={item.id_customer} style={{
+                                    marginHorizontal: 10,
+                                    marginVertical: 5,
+                                    borderRadius: 5,
+                                    borderWidth: 1,
+                                    borderColor: customer.id == item.id ? colors.primary : colors.border,
+                                    padding: 10,
+                                    flexDirection: 'row',
+                                    marginBottom: 5,
                                 }}>
-                                    <Text style={{
-                                        flex: 1,
-                                        color: customer == item.nama_customer ? colors.success : colors.black,
-                                        fontFamily: fonts.secondary[600],
-                                        fontSize: 16,
-                                    }}>{item.nama_customer}</Text>
-                                    <Text style={{
-                                        flex: 1,
-                                        fontFamily: fonts.secondary[400],
-                                        fontSize: 12,
-                                    }}>{item.telepon_customer}</Text>
-                                    <Text style={{
-                                        flex: 1,
-                                        fontFamily: fonts.secondary[400],
-                                        fontSize: 12,
-                                    }}>{item.alamat_customer}</Text>
-                                    <Text style={{
-                                        flex: 1,
-                                        fontFamily: fonts.secondary[400],
-                                        fontSize: 12,
-                                    }}>{item.keterangan_customer}</Text>
+
+                                    <View style={{
+                                        flex: 1
+                                    }}>
+                                        <Text style={{
+                                            flex: 1,
+                                            color: colors.black,
+                                            fontFamily: fonts.secondary[600],
+                                            fontSize: 16,
+                                        }}>{item.nama_customer}</Text>
+                                        <Text style={{
+                                            flex: 1,
+                                            fontFamily: fonts.secondary[400],
+                                            fontSize: 12,
+                                        }}>{item.telepon_customer}</Text>
+                                        <Text style={{
+                                            flex: 1,
+                                            fontFamily: fonts.secondary[400],
+                                            fontSize: 12,
+                                        }}>{item.alamat_customer}</Text>
+                                        <Text style={{
+                                            flex: 1,
+                                            fontFamily: fonts.secondary[400],
+                                            fontSize: 12,
+                                        }}>{item.keterangan_customer}</Text>
+                                    </View>
+
+
+
+                                    {customer.id != item.id && <TouchableOpacity style={{
+                                        marginHorizontal: 10,
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }} onPress={() => {
+                                        Alert.alert(
+                                            `${item.nama_customer}`,
+                                            `Pilih customer ini ?`,
+                                            [
+                                                {
+                                                    text: "Cancel",
+                                                    onPress: () => console.log("Cancel Pressed"),
+                                                    style: "cancel"
+                                                },
+                                                {
+                                                    text: "OK", onPress: () => {
+
+                                                        storeData('customer', item);
+                                                        setCustomer(item);
+
+                                                        showMessage({
+                                                            message: `${item.nama_customer} berhasil dipilih`,
+                                                            type: 'success'
+                                                        });
+
+                                                    }
+                                                }
+                                            ]
+                                        );
+                                    }}>
+                                        <Text style={{
+                                            backgroundColor: colors.secondary,
+                                            fontFamily: fonts.secondary[600],
+                                            color: colors.primary,
+                                            width: 60,
+                                            borderRadius: 10,
+                                            textAlign: 'center'
+                                        }}>Pilih</Text>
+                                    </TouchableOpacity>}
+
+
+                                    {customer.id == item.id && <TouchableOpacity style={{
+                                        marginHorizontal: 10,
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }} onPress={() => {
+                                        Alert.alert(
+                                            `${item.nama_customer}`,
+                                            `batalkan pilih customer ini ?`,
+                                            [
+                                                {
+                                                    text: "Cancel",
+                                                    onPress: () => console.log("Cancel Pressed"),
+                                                    style: "cancel"
+                                                },
+                                                {
+                                                    text: "OK", onPress: () => {
+
+                                                        storeData('customer', {
+                                                            id: '',
+                                                            nama_customer: '',
+                                                            alamat_customer: '',
+                                                            keterangan_customer: ''
+                                                        });
+
+                                                        showMessage({
+                                                            message: `${item.nama_customer} berhasil dipilih`,
+                                                            type: 'success'
+                                                        });
+                                                        setCustomer({
+                                                            id: '',
+                                                            nama_customer: '',
+                                                            alamat_customer: '',
+                                                            keterangan_customer: ''
+                                                        })
+                                                    }
+                                                }
+                                            ]
+                                        );
+                                    }}>
+                                        <Text style={{
+                                            fontFamily: fonts.secondary[600],
+                                            color: colors.danger
+                                        }}>Batal</Text>
+                                    </TouchableOpacity>}
+
+                                    <TouchableOpacity onPress={() => {
+                                        setOpen2(true);
+                                        setKirim(item);
+                                    }}>
+                                        <Icon type='ionicon' name='create-outline' color={colors.primary} />
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity onPress={() => {
+                                        Alert.alert(
+                                            `${item.nama_customer}`,
+                                            `Anda yakin akan hapus customer ini ?`,
+                                            [
+                                                {
+                                                    text: "Cancel",
+                                                    onPress: () => console.log("Cancel Pressed"),
+                                                    style: "cancel"
+                                                },
+                                                { text: "OK", onPress: () => deleteCustomer(item.id) }
+                                            ]
+                                        );
+                                    }}>
+                                        <Icon type='ionicon' name='trash' color={colors.secondary} />
+                                    </TouchableOpacity>
+
+
+
                                 </View>
-
-
-
-                                {customer.id != item.id && <TouchableOpacity style={{
-                                    marginHorizontal: 10,
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }} onPress={() => {
-                                    Alert.alert(
-                                        `${item.nama_customer}`,
-                                        `Pilih customer ini ?`,
-                                        [
-                                            {
-                                                text: "Cancel",
-                                                onPress: () => console.log("Cancel Pressed"),
-                                                style: "cancel"
-                                            },
-                                            {
-                                                text: "OK", onPress: () => {
-
-                                                    storeData('customer', item);
-                                                    setCustomer(item);
-
-                                                    showMessage({
-                                                        message: `${item.nama_customer} berhasil dipilih`,
-                                                        type: 'success'
-                                                    });
-
-                                                }
-                                            }
-                                        ]
-                                    );
-                                }}>
-                                    <Text style={{
-                                        fontFamily: fonts.secondary[600],
-                                        color: colors.success
-                                    }}>Pilih</Text>
-                                </TouchableOpacity>}
-
-
-                                {customer.id == item.id && <TouchableOpacity style={{
-                                    marginHorizontal: 10,
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }} onPress={() => {
-                                    Alert.alert(
-                                        `${item.nama_customer}`,
-                                        `batalkan pilih customer ini ?`,
-                                        [
-                                            {
-                                                text: "Cancel",
-                                                onPress: () => console.log("Cancel Pressed"),
-                                                style: "cancel"
-                                            },
-                                            {
-                                                text: "OK", onPress: () => {
-
-                                                    storeData('customer', {
-                                                        id: '',
-                                                        nama_customer: '',
-                                                        alamat_customer: '',
-                                                        keterangan_customer: ''
-                                                    });
-
-                                                    showMessage({
-                                                        message: `${item.nama_customer} berhasil dipilih`,
-                                                        type: 'success'
-                                                    });
-                                                    getNamaCustomer();
-                                                }
-                                            }
-                                        ]
-                                    );
-                                }}>
-                                    <Text style={{
-                                        fontFamily: fonts.secondary[600],
-                                        color: colors.danger
-                                    }}>Batal</Text>
-                                </TouchableOpacity>}
-
-                                <TouchableOpacity onPress={() => {
-                                    setOpen2(true);
-                                    setKirim(item);
-                                }}>
-                                    <Icon type='ionicon' name='create-outline' color={colors.primary} />
-                                </TouchableOpacity>
-
-                                <TouchableOpacity onPress={() => {
-                                    Alert.alert(
-                                        `${item.nama_customer}`,
-                                        `Anda yakin akan hapus customer ini ?`,
-                                        [
-                                            {
-                                                text: "Cancel",
-                                                onPress: () => console.log("Cancel Pressed"),
-                                                style: "cancel"
-                                            },
-                                            { text: "OK", onPress: () => deleteCustomer(item.id) }
-                                        ]
-                                    );
-                                }}>
-                                    <Icon type='ionicon' name='trash' color={colors.secondary} />
-                                </TouchableOpacity>
-
-
-
-                            </View>
-                        )
-                    }} />}
+                            )
+                        }} />}
             </ScrollView>}
             {open && <ScrollView style={{
                 flex: 0.5,

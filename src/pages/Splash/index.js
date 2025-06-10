@@ -84,7 +84,7 @@ export default function Splash({ navigation }) {
 
 const styles = StyleSheet.create({
   page: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.tertiary,
     flex: 1,
   },
   image: {

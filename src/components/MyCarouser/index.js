@@ -16,6 +16,7 @@ import { fonts } from '../../utils/fonts';
 import { Icon } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { urlAPI } from '../../utils/localStorage';
+import FastImage from 'react-native-fast-image'
 
 export default function MyCarouser() {
   const [activeSlide, setActiveSlide] = useState(0);
@@ -33,12 +34,14 @@ export default function MyCarouser() {
   const [data, setData] = useState([]);
 
   const renderCarouselItem = ({ item }) => (
-    <Image
+    <FastImage
+      resizeMode={FastImage.resizeMode.contain}
       source={{ uri: item.image }}
       style={{
-        resizeMode: 'cover',
+
         height: 180,
         width: 300,
+        backgroundColor: colors.black,
         borderRadius: 10,
       }}
     />

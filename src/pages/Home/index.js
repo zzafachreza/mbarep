@@ -25,6 +25,7 @@ import 'intl/locale-data/jsonp/en';
 import LottieView from 'lottie-react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { MyGap } from '../../components';
+import FastImage from 'react-native-fast-image'
 
 export default function Home({ navigation }) {
   const [user, setUser] = useState({});
@@ -256,11 +257,11 @@ export default function Home({ navigation }) {
           <TouchableOpacity onPress={() => navigation.navigate('Barang', {
             key: 0
           })} style={styles.mbtn}>
-            <Image source={require('../../assets/a1.png')} style={styles.mimg} />
+            <FastImage source={require('../../assets/a1.png')} style={styles.mimg} />
             <Text style={styles.mtext}>Transaksi Baru</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('ListData')} style={styles.mbtn}>
-            <Image source={require('../../assets/a2.png')} style={styles.mimg} />
+            <FastImage source={require('../../assets/a2.png')} style={styles.mimg} />
             <Text style={styles.mtext}>Transaksi</Text>
           </TouchableOpacity>
         </View>
@@ -270,11 +271,11 @@ export default function Home({ navigation }) {
           marginVertical: 10,
         }}>
           <TouchableOpacity style={styles.mbtn} onPress={() => navigation.navigate('Kategori')}>
-            <Image source={require('../../assets/a3.png')} style={styles.mimg} />
+            <FastImage source={require('../../assets/a3.png')} style={styles.mimg} />
             <Text style={styles.mtext}>Produk</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('Customer')} style={styles.mbtn}>
-            <Image source={require('../../assets/a4.png')} style={styles.mimg} />
+            <FastImage source={require('../../assets/a4.png')} style={styles.mimg} />
             <Text style={styles.mtext}>Pelanggan</Text>
           </TouchableOpacity>
         </View>
@@ -297,9 +298,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   mimg: {
-    width: 70,
-    height: 70,
-    margin: 10,
+    width: 100,
+    height: 100,
     resizeMode: 'contain'
   },
   mtext: {
